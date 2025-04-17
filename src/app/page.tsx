@@ -20,9 +20,7 @@ export default function PlantDiseaseDetector() {
   const [confidence, setConfidence] = useState<number | null>(null);
   const [causes, setCauses] = useState<string[] | null>(null);
   const [remedies, setRemedies] = useState<string[] | null>(null);
-  const [supplements, setSupplements] = useState<
-    {name: string; link: string}[] | null
-  >(null);
+  const [supplements, setSupplements] = useState<string[] | null>(null);
   const [loading, setLoading] = useState(false);
   const {toast} = useToast();
   const [showHomeDescription, setShowHomeDescription] = useState(false);
@@ -287,14 +285,7 @@ export default function PlantDiseaseDetector() {
           <p className="text-lg mb-6 text-center">
             Our website is dedicated to helping farmers and gardeners identify and manage plant diseases using the power of AI. We leverage advanced machine learning algorithms to analyze images of plants and provide accurate diagnoses.
           </p>
-          <p className="text-lg mb-6 text-center">
-            Our AI-driven approach offers several advantages over traditional methods:
-          </p>
-          <ul className="list-disc list-inside text-lg mb-6 text-center">
-            <li><strong>Speed and Efficiency:</strong> Get instant results without waiting for lab tests.</li>
-            <li><strong>Accuracy:</strong> Our AI models are trained on vast datasets to ensure reliable diagnoses.</li>
-            <li><strong>Accessibility:</strong> Use our tool anytime, anywhere, with just a smartphone or computer.</li>
-          </ul>
+          
         </div>
       )}
 
@@ -430,7 +421,7 @@ export default function PlantDiseaseDetector() {
                 <ul className="list-disc list-inside">
                   {supplements.map((supplement, index) => (
                     <li key={index}>
-                      {supplement.name}
+                      {supplement}
                     </li>
                   ))}
                 </ul>
@@ -447,3 +438,4 @@ export default function PlantDiseaseDetector() {
     </div>
   );
 }
+
