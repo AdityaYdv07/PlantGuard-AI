@@ -497,11 +497,9 @@ export default function PlantDiseaseDetector() {
           </div>
         )}
       </main>
-      {/* Footer */}
-      <footer className="bg-primary mt-16 py-6 text-center text-sm fixed bottom-0 left-0 w-full">
-        
-      </footer>
+      
     </div>
   );
 }
+
 
