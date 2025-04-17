@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useState, useCallback, useRef, useEffect} from 'react';
-import {UploadCloud, AlertTriangle, Camera, RotateCcw} from 'lucide-react';
+import {UploadCloud, Camera, AlertTriangle, RotateCcw} from 'lucide-react';
 import {detectDisease} from '@/ai/flows/disease-detection';
 import {suggestRemedies} from '@/ai/flows/remedy-suggestions';
 import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
@@ -12,6 +12,7 @@ import {useToast} from '@/hooks/use-toast';
 import {useDropzone} from 'react-dropzone';
 import {cn} from '@/lib/utils';
 import Image from 'next/image';
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 
 const cropData = [
   {
@@ -21,6 +22,12 @@ const cropData = [
     benefits: ['High in carbohydrates', 'Good source of energy'],
     imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Paddy_field_in_Thailand.jpg/1280px-Paddy_field_in_Thailand.jpg',
     imageAlt: 'Paddy Field',
+    growingInfo: {
+      soilType: 'Alluvial soil, clayey and loamy subsoil',
+      waterRequirement: 'High, requires standing water',
+      nutrients: 'Nitrogen, Phosphorus, Potassium',
+      cultivation: 'Transplanting seedlings in puddled fields',
+    },
   },
   {
     name: 'Wheat',
@@ -29,6 +36,12 @@ const cropData = [
     benefits: ['Rich in fiber', 'Good for heart health'],
     imageSrc: 'https://www.britannica.com/plant/wheat',
     imageAlt: 'Wheat Field',
+    growingInfo: {
+      soilType: 'Well-drained loamy soil',
+      waterRequirement: 'Moderate',
+      nutrients: 'Nitrogen, Phosphorus',
+      cultivation: 'Sowing seeds in rows',
+    },
   },
   {
     name: 'Pulses (e.g., Lentil, Chickpea)',
@@ -37,6 +50,12 @@ const cropData = [
     benefits: ['High in protein', 'Good for muscle building'],
     imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Kabuli_chana.JPG/1280px-Kabuli_chana.JPG',
     imageAlt: 'Chickpeas',
+    growingInfo: {
+      soilType: 'Sandy loamy soil',
+      waterRequirement: 'Low',
+      nutrients: 'Nitrogen fixation',
+      cultivation: 'Sowing seeds',
+    },
   },
   {
     name: 'Millets (e.g., Jowar, Bajra, Ragi)',
@@ -45,6 +64,12 @@ const cropData = [
     benefits: ['Rich in minerals', 'Good for digestion'],
     imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Sorghum_grain.jpg/1280px-Sorghum_grain.jpg',
     imageAlt: 'Jowar Crop',
+    growingInfo: {
+      soilType: 'Well-drained sandy soil',
+      waterRequirement: 'Low',
+      nutrients: 'Nitrogen, Phosphorus',
+      cultivation: 'Sowing seeds',
+    },
   },
   {
     name: 'Cotton',
@@ -53,6 +78,12 @@ const cropData = [
     benefits: ['Cash crop', 'Supports textile industry'],
     imageSrc: 'https://www.shutterstock.com/image-photo/white-cotton-field-260nw-1920694138.jpg',
     imageAlt: 'Cotton Field',
+    growingInfo: {
+      soilType: 'Black cotton soil',
+      waterRequirement: 'Moderate to high',
+      nutrients: 'Nitrogen, Phosphorus, Potassium',
+      cultivation: 'Sowing seeds',
+    },
   },
   {
     name: 'Sugarcane',
@@ -61,6 +92,12 @@ const cropData = [
     benefits: ['Source of sugar', 'Supports sugar industry'],
     imageSrc: 'https://www.shutterstock.com/image-photo/sugarcane-field-india-260nw-1342373281.jpg',
     imageAlt: 'Sugarcane Field',
+    growingInfo: {
+      soilType: 'Loamy soil',
+      waterRequirement: 'High',
+      nutrients: 'Nitrogen, Phosphorus, Potassium',
+      cultivation: 'Planting setts',
+    },
   },
   {
     name: 'Tea',
@@ -69,6 +106,12 @@ const cropData = [
     benefits: ['Beverage crop', 'Supports tea industry'],
     imageSrc: 'https://www.shutterstock.com/image-photo/tea-plantation-landscape-260nw-2144523539.jpg',
     imageAlt: 'Tea Plantation',
+    growingInfo: {
+      soilType: 'Well-drained acidic soil',
+      waterRequirement: 'High',
+      nutrients: 'Nitrogen, Potassium',
+      cultivation: 'Planting saplings',
+    },
   },
   {
     name: 'Coffee',
@@ -77,6 +120,12 @@ const cropData = [
     benefits: ['Beverage crop', 'Supports coffee industry'],
     imageSrc: 'https://www.shutterstock.com/image-photo/coffee-plantation-south-india-260nw-1072994939.jpg',
     imageAlt: 'Coffee Plantation',
+    growingInfo: {
+      soilType: 'Well-drained loamy soil',
+      waterRequirement: 'Moderate',
+      nutrients: 'Nitrogen, Phosphorus, Potassium',
+      cultivation: 'Planting seedlings',
+    },
   },
   {
     name: 'Groundnut',
@@ -85,6 +134,12 @@ const cropData = [
     benefits: ['Source of oil', 'Rich in protein'],
     imageSrc: 'https://www.shutterstock.com/image-photo/peanut-field-summer-day-260nw-2253869289.jpg',
     imageAlt: 'Groundnut Field',
+    growingInfo: {
+      soilType: 'Sandy loamy soil',
+      waterRequirement: 'Moderate',
+      nutrients: 'Nitrogen, Phosphorus, Potassium',
+      cultivation: 'Sowing seeds',
+    },
   },
   {
     name: 'Jute',
@@ -93,6 +148,12 @@ const cropData = [
     benefits: ['Fiber crop', 'Supports jute industry'],
     imageSrc: 'https://www.shutterstock.com/image-photo/jute-cultivation-rural-bengal-260nw-2251994236.jpg',
     imageAlt: 'Jute Crop',
+    growingInfo: {
+      soilType: 'Alluvial soil',
+      waterRequirement: 'High',
+      nutrients: 'Nitrogen, Phosphorus, Potassium',
+      cultivation: 'Sowing seeds',
+    },
   },
   {
     name: 'Maize',
@@ -101,6 +162,12 @@ const cropData = [
     benefits: ['Food and fodder crop', 'Source of starch'],
     imageSrc: 'https://www.shutterstock.com/image-photo/corn-field-260nw-1743118327.jpg',
     imageAlt: 'Maize Field',
+    growingInfo: {
+      soilType: 'Well-drained loamy soil',
+      waterRequirement: 'Moderate',
+      nutrients: 'Nitrogen, Phosphorus, Potassium',
+      cultivation: 'Sowing seeds',
+    },
   },
   {
     name: 'Lentil',
@@ -109,6 +176,12 @@ const cropData = [
     benefits: ['High in protein and fiber', 'Good for controlling cholesterol and blood sugar'],
     imageSrc: 'https://www.shutterstock.com/image-photo/harvesting-green-lentil-plants-lens-260nw-2341424076.jpg',
     imageAlt: 'Lentil Crop',
+    growingInfo: {
+      soilType: 'Sandy loamy soil',
+      waterRequirement: 'Low',
+      nutrients: 'Nitrogen fixation',
+      cultivation: 'Sowing seeds',
+    },
   },
   {
     name: 'Mustard',
@@ -117,6 +190,12 @@ const cropData = [
     benefits: ['Source of edible oil', 'Seeds, leaves, and stems are edible as a vegetable'],
     imageSrc: 'https://www.shutterstock.com/image-photo/close-oilseed-rape-flowers-260nw-1191949766.jpg',
     imageAlt: 'Mustard Crop',
+    growingInfo: {
+      soilType: 'Sandy loamy soil',
+      waterRequirement: 'Low',
+      nutrients: 'Nitrogen, Phosphorus, Potassium',
+      cultivation: 'Sowing seeds',
+    },
   },
   {
     name: 'Mango',
@@ -125,6 +204,12 @@ const cropData = [
     benefits: ['Rich in vitamins A and C', 'Promotes eye health and boosts immunity'],
     imageSrc: 'https://www.shutterstock.com/image-photo/indian-alphonso-mangoes-260nw-1869999028.jpg',
     imageAlt: 'Mangoes',
+    growingInfo: {
+      soilType: 'Well-drained alluvial soil',
+      waterRequirement: 'Moderate',
+      nutrients: 'Nitrogen, Phosphorus, Potassium',
+      cultivation: 'Planting grafts',
+    },
   },
   {
     name: 'Banana',
@@ -133,6 +218,12 @@ const cropData = [
     benefits: ['High in potassium', 'Good for heart health and energy'],
     imageSrc: 'https://www.shutterstock.com/image-photo/banana-isolated-on-white-background-260nw-1410860652.jpg',
     imageAlt: 'Bananas',
+    growingInfo: {
+      soilType: 'Rich loamy soil',
+      waterRequirement: 'High',
+      nutrients: 'Potassium, Nitrogen',
+      cultivation: 'Planting suckers',
+    },
   },
 ];
 
@@ -153,9 +244,7 @@ export default function PlantDiseaseDetector() {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [useRearCamera, setUseRearCamera] = useState(false);
   const [plantUnknownError, setPlantUnknownError] = useState(false);
-  
-
-  
+  const [selectedCrop, setSelectedCrop] = useState(null);
 
   const getCameraPermission = async () => {
     try {
@@ -221,7 +310,7 @@ export default function PlantDiseaseDetector() {
         setSupplements(remedySuggestionsResult.supplements || null); // Set supplements, handling undefined
 
         // Save to history
-        
+
       } catch (error: any) {
         console.error('Error analyzing image:', error);
         toast({
@@ -281,7 +370,7 @@ export default function PlantDiseaseDetector() {
   const handleAiEngineClick = () => {
     setShowAiEngine(true);
     setShowHomeDescription(false);
-    
+
     setIsCameraActive(false);
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
@@ -290,8 +379,6 @@ export default function PlantDiseaseDetector() {
       setHasCameraPermission(false);
     }
   };
-
-  
 
   const handleCamera = useCallback(() => {
     setIsCameraActive(true);
@@ -325,7 +412,13 @@ export default function PlantDiseaseDetector() {
     }
   }, [analyzeImage, toast]);
 
-  
+  const handleCropClick = (crop) => {
+    setSelectedCrop(crop);
+  };
+
+  const handleCloseDialog = () => {
+    setSelectedCrop(null);
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans flex flex-col">
@@ -334,8 +427,8 @@ export default function PlantDiseaseDetector() {
         <h1 className="text-3xl font-extrabold flex items-center gap-2 text-primary-foreground">
           <span role="img" aria-label="leaf">
             🌿
-          </span>{' '}
-          PlantGuard AI{' '}
+          </span>
+          PlantGuard AI
           <span role="img" aria-label="leaf">
             🌿
           </span>
@@ -347,7 +440,6 @@ export default function PlantDiseaseDetector() {
           <a href="#" className="hover:text-accent-foreground" onClick={handleAiEngineClick}>
             AI Engine
           </a>
-          
         </nav>
       </header>
 
@@ -362,24 +454,54 @@ export default function PlantDiseaseDetector() {
             </p>
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {cropData.map((crop, index) => (
-                <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  
-                  <CardHeader>
-                    <CardTitle>{crop.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm">
-                      <strong>Seasons:</strong> {crop.seasons.join(', ')}
-                      <br />
-                      <strong>States:</strong> {crop.states.join(', ')}
-                      <br />
-                      <strong>Benefits:</strong> {crop.benefits.join(', ')}
-                    </p>
-                  </CardContent>
-                </Card>
+                <Dialog key={index} onOpenChange={handleCloseDialog}>
+                  <DialogTrigger asChild>
+                    <Card
+                      className="shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+                      onClick={() => handleCropClick(crop)}
+                    >
+                      <CardHeader>
+                        <CardTitle>{crop.name}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm">
+                          <strong>Seasons:</strong> {crop.seasons.join(', ')}
+                          <br />
+                          <strong>States:</strong> {crop.states.join(', ')}
+                          <br />
+                          <strong>Benefits:</strong> {crop.benefits.join(', ')}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{crop.name}</DialogTitle>
+                      <DialogDescription>
+                        Learn more about {crop.name} cultivation.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                          <p><strong>Soil Type:</strong> {crop.growingInfo.soilType}</p>
+                        </div>
+                        <div>
+                          <p><strong>Water Requirement:</strong> {crop.growingInfo.waterRequirement}</p>
+                        </div>
+                        <div>
+                          <p><strong>Nutrients:</strong> {crop.growingInfo.nutrients}</p>
+                        </div>
+                        <div>
+                          <p><strong>Cultivation:</strong> {crop.growingInfo.cultivation}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               ))}
             </div>
-           
+
           </div>
         )}
 
@@ -537,10 +659,9 @@ export default function PlantDiseaseDetector() {
             </CardContent>
           </Card>
         )}
-        
+
       </main>
-      
+
     </div>
   );
 }
-
