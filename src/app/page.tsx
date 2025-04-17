@@ -408,40 +408,48 @@ export default function PlantDiseaseDetector() {
               <CardTitle>
                 {disease === 'No disease detected' ? 'Plant Maintenance Tips' : 'Remedy Suggestions'}
               </CardTitle>
-              <CardDescription>
-                {disease === 'No disease detected'
-                  ? 'Here are some tips for maintaining a healthy plant.'
-                  : 'Here are some possible causes and remedies for the detected disease.'}
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              <div>
-                <h3 className="text-lg font-semibold">Possible Causes:</h3>
-                <ul className="list-disc list-inside">
-                  {causes.map((cause, index) => (
-                    <li key={index}>{cause}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold">Suggested Remedies:</h3>
-                <ul className="list-disc list-inside">
-                  {remedies.map((remedy, index) => (
-                    <li key={index}>{remedy}</li>
-                  ))}
-                </ul>
-              </div>
-              {supplements && supplements.length > 0 && (
+              {disease === 'No disease detected' ? (
                 <div>
-                  <h3 className="text-lg font-semibold">Suggested Supplements:</h3>
+                  <h3 className="text-lg font-semibold">Plant Maintenance Tips:</h3>
                   <ul className="list-disc list-inside">
-                    {supplements.map((supplement, index) => (
-                      <li key={index}>
-                        {supplement}
-                      </li>
+                    {remedies.map((remedy, index) => (
+                      <li key={index}>{remedy}</li>
                     ))}
                   </ul>
                 </div>
+              ) : (
+                <>
+                  <div>
+                    <h3 className="text-lg font-semibold">Possible Causes:</h3>
+                    <ul className="list-disc list-inside">
+                      {causes.map((cause, index) => (
+                        <li key={index}>{cause}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold">Suggested Remedies:</h3>
+                    <ul className="list-disc list-inside">
+                      {remedies.map((remedy, index) => (
+                        <li key={index}>{remedy}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  {supplements && supplements.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold">Suggested Supplements:</h3>
+                      <ul className="list-disc list-inside">
+                        {supplements.map((supplement, index) => (
+                          <li key={index}>
+                            {supplement}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </>
               )}
             </CardContent>
           </Card>
@@ -500,5 +508,3 @@ export default function PlantDiseaseDetector() {
     </div>
   );
 }
-
-
