@@ -249,92 +249,7 @@ export default function PlantDiseaseDetector() {
     }
   }, [analyzeImage, toast]);
 
-  const cropData = [
-    {
-      name: 'Wheat',
-      imageSrc: 'https://www.britannica.com/plant/wheat',
-      imageAlt: 'Wheat Field',
-      benefits: 'Rich in carbohydrates, fiber, and essential nutrients. It is one of the primary grains used in bread, pasta, and other staple foods. Wheat cultivation dates back thousands of years, with evidence suggesting its domestication in the Fertile Crescent. The major producers of wheat include China, India, Russia, and the United States.',
-    },
-    {
-      name: 'Rice',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Paddy_field_in_Thailand.jpg/1280px-Paddy_field_in_Thailand.jpg',
-      imageAlt: 'Rice Paddy',
-      benefits: 'A staple food for billions, providing energy and some vitamins. Rice is a semi-aquatic grass and is a major source of food for more than half of the world\'s human population. The earliest known evidence of rice cultivation dates back to 8200 BCE in China. Leading rice-producing countries include China, India, Indonesia, and Bangladesh.',
-    },
-    {
-      name: 'Corn',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Maize-field-germany.jpg/1280px-Maize-field-germany.jpg',
-      imageAlt: 'Corn Field',
-      benefits: 'Versatile grain used for food, feed, and industrial purposes. Corn, also known as maize, is one of the most widely distributed food crops. It originated in southern Mexico about 9,000 years ago. The top corn-producing nations are the United States, China, Brazil, and Argentina.',
-    },
-    {
-      name: 'Soybeans',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Soybeans2.jpg/1280px-Soybeans2.jpg',
-      imageAlt: 'Soybean field',
-      benefits: 'Excellent source of protein and oil. Soybeans are legumes native to East Asia. They are an important global crop, providing oil and protein for animal feed and human consumption. Key soybean producers include the United States, Brazil, Argentina, and China.',
-    },
-    {
-      name: 'Potatoes',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/ আলু_ক্ষেত.JPG/1280px-আলু_ক্ষেত.JPG',
-      imageAlt: 'Potato field',
-      benefits: 'Rich in carbohydrates, vitamins, and minerals. Potatoes are starchy tubers native to the Andes. They are a staple food in many parts of the world. Major potato-producing countries are China, India, Russia, and Ukraine.',
-    },
-    {
-      name: 'Tomatoes',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_plant.jpg/1280px-Tomato_plant.jpg',
-      imageAlt: 'Tomato plants',
-      benefits: 'Good source of vitamins and antioxidants. Tomatoes originated in South America. They are now grown worldwide and consumed in various forms. Top tomato-producing countries include China, India, Turkey, and the United States.',
-    },
-    {
-      name: 'Bananas',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Banana_trunk_in_Dalaguete.jpg/1280px-Banana_trunk_in_Dalaguete.jpg',
-      imageAlt: 'Banana plantation',
-      benefits: 'Excellent source of potassium and energy. Bananas are tropical fruits originally from Southeast Asia. They are now cultivated in many tropical and subtropical regions. Leading banana producers include India, China, Indonesia, and Brazil.',
-    },
-    {
-      name: 'Apples',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Delicious.jpg/1280px-Red_Delicious.jpg',
-      imageAlt: 'Apple orchard',
-      benefits: 'High in fiber and vitamins. Apples are one of the most widely cultivated tree fruits. They originated in Central Asia. Major apple-producing countries include China, the United States, Turkey, and Poland.',
-    },
-    {
-      name: 'Oranges',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Orange-Fruit-on-Tree.jpg/1280px-Orange-Fruit-on-Tree.jpg',
-      imageAlt: 'Orange grove',
-      benefits: 'Rich in Vitamin C and antioxidants. Oranges are citrus fruits believed to have originated in Southeast Asia. Key orange-producing countries include Brazil, the United States, India, and Mexico.',
-    },
-    {
-      name: 'Grapes',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Grapes_on_a_vine.jpg/1280px-Grapes_on_a_vine.jpg',
-      imageAlt: 'Vineyard',
-      benefits: 'Contain antioxidants and essential nutrients. Grapes are fruit-bearing vines. They are used to produce wine, juice, and raisins. Major grape-producing countries include China, Italy, the United States, and Spain.',
-    },
-    {
-      name: 'Mangoes',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Mangos_hanging_from_tree.jpg/1280px-Mangos_hanging_from_tree.jpg',
-      imageAlt: 'Mango Tree',
-      benefits: 'Rich in vitamins A and C, and antioxidants. Mangoes are tropical fruits native to South Asia. They are now cultivated in many frost-free regions. Top mango-producing nations are India, China, Thailand, and Indonesia.',
-    },
-    {
-      name: 'Sugarcane',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Cane_Field_Bundaberg.JPG/1280px-Cane_Field_Bundaberg.JPG',
-      imageAlt: 'Sugarcane Field',
-      benefits: 'Primary source of sugar. Sugarcane is a tropical grass cultivated for its sucrose content. Key sugarcane producers include Brazil, India, Thailand, and China.',
-    },
-    {
-      name: 'Cotton',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Cotton_Field_in_Central_Texas.jpg/1280px-Cotton_Field_in_Central_Texas.jpg',
-      imageAlt: 'Cotton Field',
-      benefits: 'Source of natural fiber for textiles. Cotton is a shrub cultivated for its fiber. Major cotton-producing countries are India, China, the United States, and Brazil.',
-    },
-    {
-      name: 'Tea',
-      imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Sri_Lanka_Tea_Plantations_Nuwara_Eliya-square.jpg/1280px-Sri_Lanka_Tea_Plantations_Nuwara_Eliya-square.jpg',
-      imageAlt: 'Tea Plantation',
-      benefits: 'Contains antioxidants and enhances alertness. Tea is made from the leaves of the Camellia sinensis plant. Key tea-producing countries include China, India, Kenya, and Sri Lanka.',
-    }
-  ];
+  
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans flex flex-col">
@@ -377,26 +292,7 @@ export default function PlantDiseaseDetector() {
             <p className="text-lg mb-6 text-center">
               Our PlantGuard AI employs advanced artificial intelligence for plant disease detection. We utilize Convolutional Neural Networks (CNNs) trained on large datasets of plant images to accurately identify diseases. The AI model is continuously improved to provide reliable diagnoses.
             </p>
-            <h2 className="text-3xl font-semibold mt-8 text-center">Common Crops and their Benefits</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-              {cropData.map((crop, index) => (
-                <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <Image
-                    src={crop.imageSrc}
-                    alt={crop.imageAlt}
-                    width={400}
-                    height={300}
-                    className="w-full h-48 object-cover rounded-t-md"
-                  />
-                  <CardHeader>
-                    <CardTitle>{crop.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription>{crop.benefits}</CardDescription>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+           
           </div>
         )}
 
@@ -609,4 +505,3 @@ export default function PlantDiseaseDetector() {
     </div>
   );
 }
-
