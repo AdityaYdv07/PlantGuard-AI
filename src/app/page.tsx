@@ -412,7 +412,6 @@ export default function PlantDiseaseDetector() {
             <CardContent className="space-y-2">
               {disease === 'No disease detected' ? (
                 <div>
-                  <h3 className="text-lg font-semibold">Plant Maintenance Tips:</h3>
                   <ul className="list-disc list-inside">
                     {remedies.map((remedy, index) => (
                       <li key={index}>{remedy}</li>
