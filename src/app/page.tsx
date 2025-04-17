@@ -75,7 +75,8 @@ export default function PlantDiseaseDetector() {
   const [remedies, setRemedies] = useState<string[] | null>(null);
   const [loading, setLoading] = useState(false);
   const {toast} = useToast();
-  const [showHomeDescription, setShowHomeDescription] = useState(false);
+  const [showHomeDescription, setShowHomeDescription] = useState(true);
+  const [showAiEngine, setShowAiEngine] = useState(false);
 
   const analyzeImage = useCallback(
     async (img: string) => {
@@ -88,7 +89,7 @@ export default function PlantDiseaseDetector() {
 
         const remedySuggestionsResult = await suggestRemedies({
           disease: diseaseDetectionResult.disease,
-          plantDescription: plantName ? `Plant name: ${plantName}` : 'Plant description not available.', // Added plant description
+          plantDescription: plantName ? `Plant name: ${plantName}, Disease: ${disease}` : 'Plant description not available.',
         });
         setCauses(remedySuggestionsResult.possibleCauses);
         setRemedies(remedySuggestionsResult.remedies);
@@ -103,7 +104,7 @@ export default function PlantDiseaseDetector() {
         setLoading(false);
       }
     },
-    [toast, plantName]
+    [toast, plantName, disease]
   );
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,7 +139,13 @@ export default function PlantDiseaseDetector() {
   });
 
   const handleHomeClick = () => {
-    setShowHomeDescription(!showHomeDescription);
+    setShowHomeDescription(true);
+    setShowAiEngine(false);
+  };
+
+  const handleAiEngineClick = () => {
+    setShowAiEngine(true);
+    setShowHomeDescription(false);
   };
 
   return (
@@ -158,22 +165,28 @@ export default function PlantDiseaseDetector() {
           <a href="#" className="hover:text-accent-foreground" onClick={handleHomeClick}>
             Home
           </a>
-          <a href="#" className="hover:text-accent-foreground">
+          <a href="#" className="hover:text-accent-foreground" onClick={handleAiEngineClick}>
             AI Engine
           </a>
         </nav>
       </header>
 
       {/* Intro Text */}
-      <div className="text-center mt-10 px-4">
-        <h2 className="text-4xl font-bold mb-2">
-          This AI Engine Will Help To Detect Disease From Fruits and Veggies
-        </h2>
-        <Button className="mt-4 bg-accent text-accent-foreground font-bold py-2 px-6 rounded-full shadow hover:bg-accent/80">
-          AI Engine
-        </Button>
-      </div>
+      {!showAiEngine && (
+        <div className="text-center mt-10 px-4">
+          <h2 className="text-4xl font-bold mb-2">
+            This AI Engine Will Help To Detect Disease From Fruits and Veggies
+          </h2>
+          <Button
+            className="mt-4 bg-accent text-accent-foreground font-bold py-2 px-6 rounded-full shadow hover:bg-accent/80"
+            onClick={handleAiEngineClick}
+          >
+            AI Engine
+          </Button>
+        </div>
+      )}
 
+      {/* Home Description */}
       {showHomeDescription && (
         <div className="mt-8 px-4">
           <h2 className="text-3xl font-semibold mb-4 text-center">Welcome to CropGuard AI</h2>
@@ -209,38 +222,40 @@ export default function PlantDiseaseDetector() {
         </div>
       )}
 
-      {/* Upload Section */}
-      <Card className="mt-10 p-6 rounded-xl w-11/12 max-w-2xl mx-auto text-center shadow-2xl">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-green-800">Upload Plant Image</CardTitle>
-          <CardDescription>Drag and drop an image, or select one from your files.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div
-            className={cn(
-              'flex flex-col items-center justify-center p-6 bg-secondary rounded-xl text-green-800 border-2 border-dashed border-green-600 cursor-pointer',
-              isDragActive ? 'border-primary' : ''
+      {/* AI Engine Section */}
+      {showAiEngine && (
+        <Card className="mt-10 p-6 rounded-xl w-11/12 max-w-2xl mx-auto text-center shadow-2xl">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-green-800">Upload Plant Image</CardTitle>
+            <CardDescription>Drag and drop an image, or select one from your files.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div
+              className={cn(
+                'flex flex-col items-center justify-center p-6 bg-secondary rounded-xl text-green-800 border-2 border-dashed border-green-600 cursor-pointer',
+                isDragActive ? 'border-primary' : ''
+              )}
+              {...getRootProps()}
+            >
+              <input id="upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" {...getInputProps()} />
+              <UploadCloud className="w-10 h-10 mb-2" />
+              <span className="text-sm">Click or drag &amp; drop your image here</span>
+            </div>
+
+            {loading && <p className="mt-4 text-green-800 font-medium animate-pulse">Analyzing image...</p>}
+
+            {image && (
+              <img
+                src={image}
+                alt="Uploaded Leaf"
+                className="mt-6 w-full h-64 object-cover rounded-xl shadow-lg border"
+              />
             )}
-            {...getRootProps()}
-          >
-            <input id="upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" {...getInputProps()} />
-            <UploadCloud className="w-10 h-10 mb-2" />
-            <span className="text-sm">Click or drag &amp; drop your image here</span>
-          </div>
+          </CardContent>
+        </Card>
+      )}
 
-          {loading && <p className="mt-4 text-green-800 font-medium animate-pulse">Analyzing image...</p>}
-
-          {image && (
-            <img
-              src={image}
-              alt="Uploaded Leaf"
-              className="mt-6 w-full h-64 object-cover rounded-xl shadow-lg border"
-            />
-          )}
-        </CardContent>
-      </Card>
-
-      {disease && confidence !== null && plantName && (
+      {disease && confidence !== null && plantName && showAiEngine && (
         <Card className="w-full max-w-md mx-auto mt-8">
           <CardHeader>
             <CardTitle>Analysis Result</CardTitle>
@@ -266,7 +281,7 @@ export default function PlantDiseaseDetector() {
         </Card>
       )}
 
-      {causes && remedies && (
+      {causes && remedies && showAiEngine && (
         <Card className="w-full max-w-md mx-auto mt-8">
           <CardHeader>
             <CardTitle>Remedy Suggestions</CardTitle>
