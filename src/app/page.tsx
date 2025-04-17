@@ -7,7 +7,7 @@ import {Input} from '@/components/ui/input';
 import {detectDisease} from '@/ai/flows/disease-detection';
 import {suggestRemedies} from '@/ai/flows/remedy-suggestions';
 import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
-import {ExclamationTriangle} from 'lucide-react';
+import {AlertTriangle} from 'lucide-react';
 import {Textarea} from '@/components/ui/textarea';
 import {Badge} from '@/components/ui/badge';
 
@@ -84,7 +84,7 @@ export default function Home() {
           <CardContent>
             {disease === 'No disease detected' ? (
               <Alert>
-                <ExclamationTriangle className="h-4 w-4" />
+                <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>No Disease Detected</AlertTitle>
                 <AlertDescription>No disease was detected in the image.</AlertDescription>
               </Alert>
