@@ -11,6 +11,60 @@ import {Button} from '@/components/ui/button';
 import {useToast} from '@/hooks/use-toast';
 import {useDropzone} from 'react-dropzone';
 import {cn} from '@/lib/utils';
+import Image from 'next/image';
+
+const cropData = [
+  {
+    name: 'Wheat',
+    benefits: [
+      'Rich in carbohydrates, providing energy.',
+      'Good source of dietary fiber, aiding digestion.',
+      'Contains essential vitamins and minerals like iron and magnesium.',
+    ],
+    imageSrc: 'https://picsum.photos/400/300?random=1',
+    imageAlt: 'Golden wheat field',
+  },
+  {
+    name: 'Rice',
+    benefits: [
+      'Staple food for a large part of the world’s population.',
+      'Easy to digest and gluten-free.',
+      'Provides a good source of manganese and selenium.',
+    ],
+    imageSrc: 'https://picsum.photos/400/300?random=2',
+    imageAlt: 'Terraced rice paddies',
+  },
+  {
+    name: 'Corn',
+    benefits: [
+      'Versatile grain used in many food products.',
+      'Good source of antioxidants.',
+      'Contains vitamins A, B, and E.',
+    ],
+    imageSrc: 'https://picsum.photos/400/300?random=3',
+    imageAlt: 'Rows of corn stalks',
+  },
+  {
+    name: 'Soybeans',
+    benefits: [
+      'High in protein, essential for muscle building and repair.',
+      'Good source of healthy fats and fiber.',
+      'Contains isoflavones, which may have health benefits.',
+    ],
+    imageSrc: 'https://picsum.photos/400/300?random=4',
+    imageAlt: 'Soybean plants in a field',
+  },
+  {
+    name: 'Potatoes',
+    benefits: [
+      'Excellent source of vitamin C and potassium.',
+      'Provides energy and helps regulate blood sugar levels.',
+      'Can be prepared in many ways, making them a versatile food.',
+    ],
+    imageSrc: 'https://picsum.photos/400/300?random=5',
+    imageAlt: 'Harvested potatoes in a basket',
+  },
+];
 
 export default function PlantDiseaseDetector() {
   const [image, setImage] = useState<string | null>(null);
@@ -21,6 +75,7 @@ export default function PlantDiseaseDetector() {
   const [remedies, setRemedies] = useState<string[] | null>(null);
   const [loading, setLoading] = useState(false);
   const {toast} = useToast();
+  const [showHomeDescription, setShowHomeDescription] = useState(false);
 
   const analyzeImage = useCallback(
     async (img: string) => {
@@ -33,6 +88,7 @@ export default function PlantDiseaseDetector() {
 
         const remedySuggestionsResult = await suggestRemedies({
           disease: diseaseDetectionResult.disease,
+          plantDescription: plantName ? `Plant name: ${plantName}` : 'Plant description not available.', // Added plant description
         });
         setCauses(remedySuggestionsResult.possibleCauses);
         setRemedies(remedySuggestionsResult.remedies);
@@ -47,7 +103,7 @@ export default function PlantDiseaseDetector() {
         setLoading(false);
       }
     },
-    [toast]
+    [toast, plantName]
   );
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,6 +137,10 @@ export default function PlantDiseaseDetector() {
     },
   });
 
+  const handleHomeClick = () => {
+    setShowHomeDescription(!showHomeDescription);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
       {/* Header */}
@@ -95,17 +155,11 @@ export default function PlantDiseaseDetector() {
           </span>
         </h1>
         <nav className="space-x-6 text-lg">
-          <a href="#" className="hover:text-accent-foreground">
+          <a href="#" className="hover:text-accent-foreground" onClick={handleHomeClick}>
             Home
           </a>
           <a href="#" className="hover:text-accent-foreground">
             AI Engine
-          </a>
-          <a href="#" className="hover:text-accent-foreground">
-            Supplements
-          </a>
-          <a href="#" className="hover:text-accent-foreground">
-            Contact-Us
           </a>
         </nav>
       </header>
@@ -119,6 +173,41 @@ export default function PlantDiseaseDetector() {
           AI Engine
         </Button>
       </div>
+
+      {showHomeDescription && (
+        <div className="mt-8 px-4">
+          <h2 className="text-3xl font-semibold mb-4 text-center">Welcome to CropGuard AI</h2>
+          <p className="text-lg mb-6 text-center">
+            Our website is dedicated to helping farmers and gardeners identify and manage plant diseases using the power of AI.
+            Below are some common crops and their benefits:
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {cropData.map((crop, index) => (
+              <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <Image
+                  src={crop.imageSrc}
+                  alt={crop.imageAlt}
+                  width={400}
+                  height={300}
+                  className="rounded-t-md object-cover h-48 w-full"
+                />
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold">{crop.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <h3 className="text-lg font-semibold mb-2">Benefits:</h3>
+                  <ul className="list-disc list-inside">
+                    {crop.benefits.map((benefit, i) => (
+                      <li key={i}>{benefit}</li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Upload Section */}
       <Card className="mt-10 p-6 rounded-xl w-11/12 max-w-2xl mx-auto text-center shadow-2xl">
@@ -206,7 +295,6 @@ export default function PlantDiseaseDetector() {
 
       {/* Footer */}
       <footer className="bg-primary mt-16 py-6 text-center text-sm">
-        
         <p className="text-primary-foreground">Created by Aditya , Tanuj and Mayank</p>
       </footer>
     </div>
