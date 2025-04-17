@@ -27,6 +27,7 @@ const cropData = [
       waterRequirement: 'High, requires standing water',
       nutrients: 'Nitrogen, Phosphorus, Potassium',
       cultivation: 'Transplanting seedlings in puddled fields',
+      process: 'Rice cultivation typically involves flooding the fields to control weeds and provide the ideal environment for growth. The process starts with preparing the land, sowing seeds, transplanting seedlings, and maintaining the water level. Harvesting is done when the grains are mature and dry.'
     },
   },
   {
@@ -41,6 +42,7 @@ const cropData = [
       waterRequirement: 'Moderate',
       nutrients: 'Nitrogen, Phosphorus',
       cultivation: 'Sowing seeds in rows',
+       process: 'Wheat cultivation involves preparing the soil by plowing and harrowing, followed by sowing seeds in rows. Regular watering is necessary, especially during critical growth stages. Harvesting occurs when the grains are hard and the stalks turn yellow.'
     },
   },
   {
@@ -55,6 +57,7 @@ const cropData = [
       waterRequirement: 'Low',
       nutrients: 'Nitrogen fixation',
       cultivation: 'Sowing seeds',
+      process: 'Pulse cultivation involves preparing the soil by plowing and leveling, followed by sowing seeds. Minimal watering is required as pulses are drought-resistant. Harvesting is done when the pods are dry and the seeds are mature.'
     },
   },
   {
@@ -69,6 +72,7 @@ const cropData = [
       waterRequirement: 'Low',
       nutrients: 'Nitrogen, Phosphorus',
       cultivation: 'Sowing seeds',
+       process: 'Millet cultivation involves preparing the soil and sowing seeds directly. Millets are hardy crops and require minimal water and care. Harvesting is done when the grains are fully mature and dry.'
     },
   },
   {
@@ -83,6 +87,7 @@ const cropData = [
       waterRequirement: 'Moderate to high',
       nutrients: 'Nitrogen, Phosphorus, Potassium',
       cultivation: 'Sowing seeds',
+       process: 'Cotton cultivation involves preparing the black cotton soil and sowing seeds. Regular irrigation and pest management are crucial. Harvesting is done when the cotton bolls are fully open.'
     },
   },
   {
@@ -97,6 +102,7 @@ const cropData = [
       waterRequirement: 'High',
       nutrients: 'Nitrogen, Phosphorus, Potassium',
       cultivation: 'Planting setts',
+       process: 'Sugarcane cultivation involves planting setts (stem cuttings). High irrigation and nutrient supply are essential for its growth. Harvesting is done when the cane is mature and has high sugar content.'
     },
   },
   {
@@ -111,6 +117,7 @@ const cropData = [
       waterRequirement: 'High',
       nutrients: 'Nitrogen, Potassium',
       cultivation: 'Planting saplings',
+       process: 'Tea cultivation involves planting saplings in well-drained acidic soil. Regular pruning and irrigation are required. Harvesting is done by plucking the young leaves and buds.'
     },
   },
   {
@@ -125,6 +132,7 @@ const cropData = [
       waterRequirement: 'Moderate',
       nutrients: 'Nitrogen, Phosphorus, Potassium',
       cultivation: 'Planting seedlings',
+       process: 'Coffee cultivation involves planting seedlings in well-drained loamy soil. Shade, regular watering, and pruning are essential. Harvesting is done by picking the ripe coffee cherries.'
     },
   },
   {
@@ -139,6 +147,7 @@ const cropData = [
       waterRequirement: 'Moderate',
       nutrients: 'Nitrogen, Phosphorus, Potassium',
       cultivation: 'Sowing seeds',
+       process: 'Groundnut cultivation involves preparing sandy loamy soil and sowing seeds. Regular weeding and moderate irrigation are required. Harvesting is done by uprooting the plants when the pods are mature.'
     },
   },
   {
@@ -153,6 +162,7 @@ const cropData = [
       waterRequirement: 'High',
       nutrients: 'Nitrogen, Phosphorus, Potassium',
       cultivation: 'Sowing seeds',
+      process: 'Jute cultivation involves sowing seeds in alluvial soil. High water requirements are met by monsoon rains and irrigation. Harvesting is done by cutting the plants when they are at the flowering stage.'
     },
   },
   {
@@ -167,6 +177,7 @@ const cropData = [
       waterRequirement: 'Moderate',
       nutrients: 'Nitrogen, Phosphorus, Potassium',
       cultivation: 'Sowing seeds',
+       process: 'Maize cultivation involves preparing well-drained loamy soil and sowing seeds. Regular irrigation and fertilization are important. Harvesting is done when the kernels are mature and dry.'
     },
   },
   {
@@ -181,6 +192,7 @@ const cropData = [
       waterRequirement: 'Low',
       nutrients: 'Nitrogen fixation',
       cultivation: 'Sowing seeds',
+       process: 'Lentil cultivation involves preparing sandy loamy soil and sowing seeds. Lentils require low water and are often grown in dry regions. Harvesting is done when the pods are dry and the seeds are mature.'
     },
   },
   {
@@ -195,6 +207,7 @@ const cropData = [
       waterRequirement: 'Low',
       nutrients: 'Nitrogen, Phosphorus, Potassium',
       cultivation: 'Sowing seeds',
+       process: 'Mustard cultivation involves preparing sandy loamy soil and sowing seeds. It requires minimal water and care. Harvesting is done when the pods are dry and the seeds are mature.'
     },
   },
   {
@@ -209,6 +222,7 @@ const cropData = [
       waterRequirement: 'Moderate',
       nutrients: 'Nitrogen, Phosphorus, Potassium',
       cultivation: 'Planting grafts',
+       process: 'Mango cultivation involves planting grafts in well-drained alluvial soil. Regular pruning, irrigation, and pest management are essential. Harvesting is done when the fruits are ripe and have the desired color and aroma.'
     },
   },
   {
@@ -223,6 +237,7 @@ const cropData = [
       waterRequirement: 'High',
       nutrients: 'Potassium, Nitrogen',
       cultivation: 'Planting suckers',
+       process: 'Banana cultivation involves planting suckers in rich loamy soil. High irrigation, nutrient supply, and protection from wind are important. Harvesting is done when the fruits are mature but still green.'
     },
   },
 ];
@@ -494,6 +509,9 @@ export default function PlantDiseaseDetector() {
                         </div>
                         <div>
                           <p><strong>Cultivation:</strong> {crop.growingInfo.cultivation}</p>
+                        </div>
+                         <div>
+                          <p><strong>Process:</strong> {crop.growingInfo.process}</p>
                         </div>
                       </div>
                     </div>
