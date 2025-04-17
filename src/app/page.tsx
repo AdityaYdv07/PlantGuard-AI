@@ -386,7 +386,6 @@ export default function PlantDiseaseDetector() {
                 <Alert>
                   <AlertTitle>No Disease Detected</AlertTitle>
                   <AlertDescription>No disease was detected in the image.</AlertDescription>
-                  <AlertDescription className="mt-4">Here are some tips for maintaining a healthy plant:</AlertDescription>
                 </Alert>
               ) : (
                 <>
@@ -500,8 +499,9 @@ export default function PlantDiseaseDetector() {
       </main>
       {/* Footer */}
       <footer className="bg-primary mt-16 py-6 text-center text-sm fixed bottom-0 left-0 w-full">
-        <p className="text-primary-foreground">Created by Aditya , Tanuj and Mayank</p>
+        
       </footer>
     </div>
   );
 }
+
