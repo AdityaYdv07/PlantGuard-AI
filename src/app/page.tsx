@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useState, useCallback} from 'react';
-import {UploadCloud} from 'lucide-react';
+import {UploadCloud, AlertTriangle} from 'lucide-react';
 import {detectDisease} from '@/ai/flows/disease-detection';
 import {suggestRemedies} from '@/ai/flows/remedy-suggestions';
 import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
@@ -160,7 +160,6 @@ export default function PlantDiseaseDetector() {
           <CardContent>
             {disease === 'No disease detected' ? (
               <Alert>
-                <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>No Disease Detected</AlertTitle>
                 <AlertDescription>No disease was detected in the image.</AlertDescription>
               </Alert>
@@ -222,8 +221,9 @@ export default function PlantDiseaseDetector() {
             AI Engine
           </a>
         </div>
-        <p className="text-primary-foreground">Created by Manthan Bhakadya &amp; Krishna Baldaniya</p>
+        <p className="text-primary-foreground">Created by Aditya , Tanuj and Mayank</p>
       </footer>
     </div>
   );
 }
+
