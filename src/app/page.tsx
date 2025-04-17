@@ -175,7 +175,7 @@ export default function PlantDiseaseDetector() {
       {!showAiEngine && (
         <div className="text-center mt-10 px-4">
           <h2 className="text-4xl font-bold mb-2">
-            This AI Engine Will Help To Detect Disease From Fruits and Veggies
+            This AI Engine Will Help To Detect Disease From Crops , Fruits and Veggies
           </h2>
           <Button
             className="mt-4 bg-accent text-accent-foreground font-bold py-2 px-6 rounded-full shadow hover:bg-accent/80"
@@ -195,30 +195,7 @@ export default function PlantDiseaseDetector() {
             Below are some common crops and their benefits:
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {cropData.map((crop, index) => (
-              <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <Image
-                  src={crop.imageSrc}
-                  alt={crop.imageAlt}
-                  width={400}
-                  height={300}
-                  className="rounded-t-md object-cover h-48 w-full"
-                />
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold">{crop.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <h3 className="text-lg font-semibold mb-2">Benefits:</h3>
-                  <ul className="list-disc list-inside">
-                    {crop.benefits.map((benefit, i) => (
-                      <li key={i}>{benefit}</li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          
         </div>
       )}
 
@@ -315,3 +292,4 @@ export default function PlantDiseaseDetector() {
     </div>
   );
 }
+
