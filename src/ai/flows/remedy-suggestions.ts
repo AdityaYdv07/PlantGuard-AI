@@ -59,11 +59,7 @@ Given the following description of the plant and its environment:
 
 Please suggest possible causes, remedies, and supplements for this disease.
 
-For each supplement, provide a name and a link where it can be purchased online.
-
-Format your output as a JSON object with "possibleCauses", "remedies", and "supplements" fields.
-The "possibleCauses" and "remedies" fields should contain a list of strings.
-The "supplements" field should contain a list of objects, each with "name" and "link" fields.
+For each supplement, provide a name. Provide just name of the supplement. Do not provide link here.
 `,
 });
 
@@ -78,7 +74,16 @@ const suggestRemediesFlow = ai.defineFlow<
   },
   async input => {
     const {output} = await prompt(input);
-    return output!;
+
+    // Generate BharatAgri buy links for supplements
+    const supplementsWithLinks = output?.supplements?.map(supplement => ({
+      ...supplement,
+      link: `https://www.bharatagri.com/search?q=${encodeURIComponent(supplement.name)}`,
+    }));
+
+    return {
+      ...output!,
+      supplements: supplementsWithLinks,
+    };
   }
 );
-
