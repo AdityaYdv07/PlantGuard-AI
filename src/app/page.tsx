@@ -114,8 +114,8 @@ export default function PlantDiseaseDetector() {
         }
 
         const remedySuggestionsResult = await suggestRemedies({
-          disease: diseaseDetectionResult.disease,
-          plantDescription: `Plant name: ${diseaseDetectionResult.plantName}, Disease: ${diseaseDetectionResult.disease}`,
+          disease: diseaseDetectionResult.disease || 'No disease detected',
+          plantDescription: `Plant name: ${diseaseDetectionResult.plantName}, Disease: ${diseaseDetectionResult.disease || 'No disease detected'}`,
         });
         setCauses(remedySuggestionsResult.possibleCauses);
         setRemedies(remedySuggestionsResult.remedies);
@@ -235,44 +235,6 @@ export default function PlantDiseaseDetector() {
     }
   }, [analyzeImage, toast]);
 
-  const cropData = [
-    {
-      name: 'Wheat',
-      benefits:
-        'Rich in carbohydrates, fiber, and essential nutrients. Supports energy production and digestive health.',
-      imageSrc: 'https://picsum.photos/400/300?random=1',
-      imageAlt: 'Image of wheat',
-    },
-    {
-      name: 'Rice',
-      benefits:
-        'A staple food providing carbohydrates and energy. Different varieties offer various nutritional profiles.',
-      imageSrc: 'https://picsum.photos/400/300?random=2',
-      imageAlt: 'Image of rice',
-    },
-    {
-      name: 'Corn',
-      benefits:
-        'Good source of fiber, vitamins, and minerals. Supports digestive health and provides antioxidants.',
-      imageSrc: 'https://picsum.photos/400/300?random=3',
-      imageAlt: 'Image of corn',
-    },
-    {
-      name: 'Soybeans',
-      benefits:
-        'High in protein and essential amino acids. Supports muscle growth and overall health.',
-      imageSrc: 'https://picsum.photos/400/300?random=4',
-      imageAlt: 'Image of soybeans',
-    },
-    {
-      name: 'Potatoes',
-      benefits:
-        'Excellent source of vitamin C, potassium, and fiber. Supports immune function and energy production.',
-      imageSrc: 'https://picsum.photos/400/300?random=5',
-      imageAlt: 'Image of potatoes',
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
       {/* Header */}
@@ -315,11 +277,6 @@ export default function PlantDiseaseDetector() {
           <p className="text-lg mb-6 text-center">
             Our AI-driven approach offers several advantages over traditional methods:
           </p>
-          <ul className="list-disc list-inside text-lg mb-6 text-center">
-            <li><strong>Speed and Efficiency:</strong> Get instant results without waiting for lab tests.</li>
-            <li><strong>Accuracy:</strong> Our AI models are trained on vast datasets to ensure reliable diagnoses.</li>
-            <li><strong>Accessibility:</strong> Use our tool anytime, anywhere, with just a smartphone or computer.</li>
-          </ul>
         </div>
       )}
 
@@ -429,8 +386,14 @@ export default function PlantDiseaseDetector() {
       {causes && remedies && showAiEngine && !plantUnknownError && (
         <Card className="w-full max-w-md mx-auto mt-8">
           <CardHeader>
-            <CardTitle>Remedy Suggestions</CardTitle>
-            <CardDescription>Here are some possible causes and remedies for the detected disease.</CardDescription>
+            <CardTitle>
+              {disease === 'No disease detected' ? 'Plant Maintenance Tips' : 'Remedy Suggestions'}
+            </CardTitle>
+            <CardDescription>
+              {disease === 'No disease detected'
+                ? 'Here are some tips for maintaining a healthy plant.'
+                : 'Here are some possible causes and remedies for the detected disease.'}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             <div>

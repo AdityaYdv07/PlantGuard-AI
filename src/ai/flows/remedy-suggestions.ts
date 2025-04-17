@@ -13,7 +13,7 @@ import {ai} from '@/ai/ai-instance';
 import {z} from 'genkit';
 
 const SuggestRemediesInputSchema = z.object({
-  disease: z.string().describe('The name of the detected plant disease.'),
+  disease: z.string().describe('The name of the detected plant disease. If no disease detected, this field should be "No disease detected".'),
   plantDescription: z.string().describe('A description of the plant and its environment.'),
 });
 export type SuggestRemediesInput = z.infer<typeof SuggestRemediesInputSchema>;
@@ -33,7 +33,7 @@ const prompt = ai.definePrompt({
   name: 'suggestRemediesPrompt',
   input: {
     schema: z.object({
-      disease: z.string().describe('The name of the detected plant disease.'),
+      disease: z.string().describe('The name of the detected plant disease. If no disease detected, this field should be "No disease detected".'),
       plantDescription: z.string().describe('A description of the plant and its environment.'),
     }),
   },
@@ -46,14 +46,21 @@ const prompt = ai.definePrompt({
   },
   prompt: `You are an expert in plant diseases and remedies.
 
-You have identified that a plant has the following disease: {{{disease}}}.
-
-Given the following description of the plant and its environment:
-{{{plantDescription}}}
-
-Please suggest possible causes, remedies, and supplements for this disease.
-
-For each supplement, provide instructions on how to use them for the disease to make the plant healthy.
+  {% if disease == "No disease detected" %}
+  Given the following description of the plant and its environment:
+  {{{plantDescription}}}
+  
+  Please suggest possible causes and remedies for how to maintain this plant and keep it healthy.
+  {% else %}
+  You have identified that a plant has the following disease: {{{disease}}}.
+  
+  Given the following description of the plant and its environment:
+  {{{plantDescription}}}
+  
+  Please suggest possible causes, remedies, and supplements for this disease.
+  
+  For each supplement, provide instructions on how to use them for the disease to make the plant healthy.
+  {% endif %}
 `,
 });
 
