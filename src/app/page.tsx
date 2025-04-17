@@ -33,7 +33,6 @@ export default function PlantDiseaseDetector() {
 
         const remedySuggestionsResult = await suggestRemedies({
           disease: diseaseDetectionResult.disease,
-          plantDescription: `This is a ${diseaseDetectionResult.plantName} plant.`,
         });
         setCauses(remedySuggestionsResult.possibleCauses);
         setRemedies(remedySuggestionsResult.remedies);
@@ -207,23 +206,9 @@ export default function PlantDiseaseDetector() {
 
       {/* Footer */}
       <footer className="bg-primary mt-16 py-6 text-center text-sm">
-        <div className="mb-2 space-x-4">
-          <a href="#" className="text-primary-foreground hover:text-accent-foreground">
-            Home
-          </a>
-          <a href="#" className="text-primary-foreground hover:text-accent-foreground">
-            Services
-          </a>
-          <a href="#" className="text-primary-foreground hover:text-accent-foreground">
-            About
-          </a>
-          <a href="#" className="text-primary-foreground hover:text-accent-foreground">
-            AI Engine
-          </a>
-        </div>
+        
         <p className="text-primary-foreground">Created by Aditya , Tanuj and Mayank</p>
       </footer>
     </div>
   );
 }
-
