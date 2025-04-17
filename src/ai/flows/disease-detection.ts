@@ -45,7 +45,7 @@ const prompt = ai.definePrompt({
   Respond with the detected plant name, detected disease and a confidence score.
   If no disease is detected, state that no disease was detected and return a confidence of 1.0.
 
-  Photo: {{media url=photoUrl}}`,
+  Photo: {{media url=photoUrl mimeType="image/jpeg"}}`,
 });
 
 const detectDiseaseFlow = ai.defineFlow<
