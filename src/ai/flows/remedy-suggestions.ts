@@ -21,10 +21,7 @@ export type SuggestRemediesInput = z.infer<typeof SuggestRemediesInputSchema>;
 const SuggestRemediesOutputSchema = z.object({
   possibleCauses: z.array(z.string()).describe('Possible causes of the disease.'),
   remedies: z.array(z.string()).describe('Suggested remedies for the disease.'),
-  supplements: z.array(z.object({
-    name: z.string().describe('The name of the recommended supplement.'),
-    link: z.string().describe('A link to buy the supplement online.'),
-  })).optional().describe('Suggested supplements for the disease, including a buy link.'),
+  supplements: z.array(z.string()).optional().describe('Suggested supplements for the disease.'),
 });
 export type SuggestRemediesOutput = z.infer<typeof SuggestRemediesOutputSchema>;
 
@@ -44,10 +41,7 @@ const prompt = ai.definePrompt({
     schema: z.object({
       possibleCauses: z.array(z.string()).describe('Possible causes of the disease.'),
       remedies: z.array(z.string()).describe('Suggested remedies for the disease.'),
-      supplements: z.array(z.object({
-        name: z.string().describe('The name of the recommended supplement.'),
-        link: z.string().describe('A link to buy the supplement online.'),
-      })).optional().describe('Suggested supplements for the disease, including a buy link.'),
+      supplements: z.array(z.string()).optional().describe('Suggested supplements for the disease, with instructions on how to use them. '),
     }),
   },
   prompt: `You are an expert in plant diseases and remedies.
@@ -59,7 +53,7 @@ Given the following description of the plant and its environment:
 
 Please suggest possible causes, remedies, and supplements for this disease.
 
-For each supplement, provide a name. Provide just name of the supplement. Do not provide link here.
+For each supplement, provide instructions on how to use them for the disease to make the plant healthy.
 `,
 });
 
