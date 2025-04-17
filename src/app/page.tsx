@@ -144,7 +144,7 @@ export default function PlantDiseaseDetector() {
         setLoading(false);
       }
     },
-    [toast, plantName, disease]
+    [toast]
   );
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -235,8 +235,29 @@ export default function PlantDiseaseDetector() {
     }
   }, [analyzeImage, toast]);
 
+  const cropData = [
+    {
+      name: 'Wheat',
+      imageSrc: 'https://picsum.photos/400/300?random=1',
+      imageAlt: 'Wheat Field',
+      benefits: 'Rich in carbohydrates, fiber, and essential nutrients.'
+    },
+    {
+      name: 'Rice',
+      imageSrc: 'https://picsum.photos/400/300?random=2',
+      imageAlt: 'Rice Paddy',
+      benefits: 'A staple food for billions, providing energy and some vitamins.'
+    },
+    {
+      name: 'Corn',
+      imageSrc: 'https://picsum.photos/400/300?random=3',
+      imageAlt: 'Corn Field',
+      benefits: 'Versatile grain used for food, feed, and industrial purposes.'
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans">
+    <div className="min-h-screen bg-background text-foreground font-sans flex flex-col">
       {/* Header */}
       <header className="bg-primary py-4 px-8 flex justify-between items-center shadow-md">
         <h1 className="text-3xl font-extrabold flex items-center gap-2 text-primary-foreground">
@@ -262,221 +283,221 @@ export default function PlantDiseaseDetector() {
         </nav>
       </header>
 
-      {/* Home Description */}
-      {showHomeDescription && (
-        <div className="mt-8 px-4">
-          <h2 className="text-3xl font-semibold mb-4 text-center">Welcome to PlantGuard AI</h2>
-          <p className="text-lg mb-6 text-center">
-            Our website is dedicated to helping farmers and gardeners identify and manage plant diseases using the power of AI. We leverage advanced machine learning algorithms to analyze images of plants and provide accurate diagnoses.
-          </p>
-          <h2 className="text-3xl font-semibold mt-8 text-center">How We Use AI</h2>
-          <p className="text-lg mb-6 text-center">
-            PlantGuard AI employs cutting-edge artificial intelligence to revolutionize plant disease detection. Our system utilizes convolutional neural networks (CNNs) trained on vast datasets of plant images to identify diseases with high accuracy.
-          </p>
-          <h2 className="text-3xl font-semibold mt-8 text-center">Why PlantGuard AI is better</h2>
-          <p className="text-lg mb-6 text-center">
-            Our AI-driven approach offers several advantages over traditional methods:
-          </p>
-        </div>
-      )}
+      {/* Main Content */}
+      <main className="flex-grow">
+        {/* Home Description */}
+        {showHomeDescription && (
+          <div className="mt-8 px-4">
+            <h2 className="text-3xl font-semibold mb-4 text-center">Welcome to PlantGuard AI</h2>
+            <p className="text-lg mb-6 text-center">
+              Our website is dedicated to helping farmers and gardeners identify and manage plant diseases using the power of AI. We leverage advanced machine learning algorithms to analyze images of plants and provide accurate diagnoses.
+            </p>
+            <h2 className="text-3xl font-semibold mt-8 text-center">How We Use AI</h2>
+            <p className="text-lg mb-6 text-center">
+              PlantGuard AI employs cutting-edge artificial intelligence to revolutionize plant disease detection. Our system utilizes convolutional neural networks (CNNs) trained on vast datasets of plant images to identify diseases with high accuracy.
+            </p>
+          </div>
+        )}
 
-      {/* AI Engine Section */}
-      {showAiEngine && (
-        <Card className="mt-10 p-6 rounded-xl w-11/12 max-w-2xl mx-auto text-center shadow-2xl">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-green-800">Upload Plant Image</CardTitle>
-            <CardDescription>Drag and drop an image, select one from your files, or use your camera.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4">
-              <div
-                className={cn(
-                  'flex flex-col items-center justify-center p-6 bg-secondary rounded-xl text-green-800 border-2 border-dashed border-green-600 cursor-pointer',
-                  isDragActive ? 'border-primary' : ''
+        {/* AI Engine Section */}
+        {showAiEngine && (
+          <Card className="mt-10 p-6 rounded-xl w-11/12 max-w-2xl mx-auto text-center shadow-2xl">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-green-800">Upload Plant Image</CardTitle>
+              <CardDescription>Drag and drop an image, select one from your files, or use your camera.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                <div
+                  className={cn(
+                    'flex flex-col items-center justify-center p-6 bg-secondary rounded-xl text-green-800 border-2 border-dashed border-green-600 cursor-pointer',
+                    isDragActive ? 'border-primary' : ''
+                  )}
+                  {...getRootProps()}
+                >
+                  <input id="upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" {...getInputProps()} />
+                  <UploadCloud className="w-10 h-10 mb-2" />
+                  <span className="text-sm">Click or drag &amp; drop your image here</span>
+                </div>
+
+                <Button variant="outline" onClick={handleCamera} disabled={isCameraActive}>
+                  <Camera className="w-4 h-4 mr-2" />
+                  Take a Picture
+                </Button>
+                {isCameraActive && (
+                  <>
+                    <video ref={videoRef} className="w-full aspect-video rounded-md" autoPlay muted />
+                    <Button variant="outline" onClick={handleCapture} disabled={!hasCameraPermission}>
+                      Capture Image
+                    </Button>
+                    <label className="inline-flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        className="cursor-pointer"
+                        checked={useRearCamera}
+                        onChange={() => setUseRearCamera(!useRearCamera)}
+                      />
+                      <span>Use Rear Camera</span>
+                    </label>
+                  </>
                 )}
-                {...getRootProps()}
-              >
-                <input id="upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" {...getInputProps()} />
-                <UploadCloud className="w-10 h-10 mb-2" />
-                <span className="text-sm">Click or drag &amp; drop your image here</span>
+
+                {isCameraActive && !hasCameraPermission && (
+                  <Alert variant="destructive">
+                    <AlertTitle>Camera Access Required</AlertTitle>
+                    <AlertDescription>
+                      Please allow camera access to use this feature.
+                    </AlertDescription>
+                  </Alert>
+                )}
               </div>
 
-              <Button variant="outline" onClick={handleCamera} disabled={isCameraActive}>
-                <Camera className="w-4 h-4 mr-2" />
-                Take a Picture
-              </Button>
-              {isCameraActive && (
+              {loading && <p className="mt-4 text-green-800 font-medium animate-pulse">Analyzing image...</p>}
+
+              {image && (
+                <Image
+                  src={image}
+                  alt="Uploaded Leaf"
+                  width={500}
+                  height={300}
+                  className="mt-6 w-full h-auto object-cover rounded-xl shadow-lg border"
+                />
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {plantUnknownError && showAiEngine && (
+          <Alert variant="destructive" className="w-full max-w-md mx-auto mt-8">
+            <AlertTitle>Unknown Plant</AlertTitle>
+            <AlertDescription>
+              We could not identify the plant in the image. Please try again with a clearer image.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {disease && confidence !== null && plantName && showAiEngine && !plantUnknownError && (
+          <Card className="w-full max-w-md mx-auto mt-8">
+            <CardHeader>
+              <CardTitle>Analysis Result</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div>
+                Detected Plant: <Badge variant="secondary">{plantName}</Badge>
+              </div>
+              {disease === 'No disease detected' ? (
+                <Alert>
+                  <AlertTitle>No Disease Detected</AlertTitle>
+                  <AlertDescription>No disease was detected in the image.</AlertDescription>
+                </Alert>
+              ) : (
                 <>
-                  <video ref={videoRef} className="w-full aspect-video rounded-md" autoPlay muted />
-                  <Button variant="outline" onClick={handleCapture} disabled={!hasCameraPermission}>
-                    Capture Image
-                  </Button>
-                  <label className="inline-flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      className="cursor-pointer"
-                      checked={useRearCamera}
-                      onChange={() => setUseRearCamera(!useRearCamera)}
-                    />
-                    <span>Use Rear Camera</span>
-                  </label>
+                  <div>
+                    Detected Disease: <Badge variant="destructive">{plantName} - {disease}</Badge>
+                  </div>
+                  <p>Confidence: {(confidence * 100).toFixed(2)}%</p>
                 </>
               )}
+            </CardContent>
+          </Card>
+        )}
 
-              {isCameraActive && !hasCameraPermission && (
-                <Alert variant="destructive">
-                  <AlertTitle>Camera Access Required</AlertTitle>
-                  <AlertDescription>
-                    Please allow camera access to use this feature.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </div>
-
-            {loading && <p className="mt-4 text-green-800 font-medium animate-pulse">Analyzing image...</p>}
-
-            {image && (
-              <Image
-                src={image}
-                alt="Uploaded Leaf"
-                width={500}
-                height={300}
-                className="mt-6 w-full h-auto object-cover rounded-xl shadow-lg border"
-              />
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {plantUnknownError && showAiEngine && (
-        <Alert variant="destructive" className="w-full max-w-md mx-auto mt-8">
-          <AlertTitle>Unknown Plant</AlertTitle>
-          <AlertDescription>
-            We could not identify the plant in the image. Please try again with a clearer image.
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {disease && confidence !== null && plantName && showAiEngine && !plantUnknownError && (
-        <Card className="w-full max-w-md mx-auto mt-8">
-          <CardHeader>
-            <CardTitle>Analysis Result</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div>
-              Detected Plant: <Badge variant="secondary">{plantName}</Badge>
-            </div>
-            {disease === 'No disease detected' ? (
-              <Alert>
-                <AlertTitle>No Disease Detected</AlertTitle>
-                <AlertDescription>No disease was detected in the image.</AlertDescription>
-              </Alert>
-            ) : (
-              <>
-                <div>
-                  Detected Disease: <Badge variant="destructive">{plantName} - {disease}</Badge>
-                </div>
-                <p>Confidence: {(confidence * 100).toFixed(2)}%</p>
-              </>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
-      {causes && remedies && showAiEngine && !plantUnknownError && (
-        <Card className="w-full max-w-md mx-auto mt-8">
-          <CardHeader>
-            <CardTitle>
-              {disease === 'No disease detected' ? 'Plant Maintenance Tips' : 'Remedy Suggestions'}
-            </CardTitle>
-            <CardDescription>
-              {disease === 'No disease detected'
-                ? 'Here are some tips for maintaining a healthy plant.'
-                : 'Here are some possible causes and remedies for the detected disease.'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div>
-              <h3 className="text-lg font-semibold">Possible Causes:</h3>
-              <ul className="list-disc list-inside">
-                {causes.map((cause, index) => (
-                  <li key={index}>{cause}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold">Suggested Remedies:</h3>
-              <ul className="list-disc list-inside">
-                {remedies.map((remedy, index) => (
-                  <li key={index}>{remedy}</li>
-                ))}
-              </ul>
-            </div>
-            {supplements && supplements.length > 0 && (
+        {causes && remedies && showAiEngine && !plantUnknownError && (
+          <Card className="w-full max-w-md mx-auto mt-8">
+            <CardHeader>
+              <CardTitle>
+                {disease === 'No disease detected' ? 'Plant Maintenance Tips' : 'Remedy Suggestions'}
+              </CardTitle>
+              <CardDescription>
+                {disease === 'No disease detected'
+                  ? 'Here are some tips for maintaining a healthy plant.'
+                  : 'Here are some possible causes and remedies for the detected disease.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
               <div>
-                <h3 className="text-lg font-semibold">Suggested Supplements:</h3>
+                <h3 className="text-lg font-semibold">Possible Causes:</h3>
                 <ul className="list-disc list-inside">
-                  {supplements.map((supplement, index) => (
-                    <li key={index}>
-                      {supplement}
-                    </li>
+                  {causes.map((cause, index) => (
+                    <li key={index}>{cause}</li>
                   ))}
                 </ul>
               </div>
+              <div>
+                <h3 className="text-lg font-semibold">Suggested Remedies:</h3>
+                <ul className="list-disc list-inside">
+                  {remedies.map((remedy, index) => (
+                    <li key={index}>{remedy}</li>
+                  ))}
+                </ul>
+              </div>
+              {supplements && supplements.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold">Suggested Supplements:</h3>
+                  <ul className="list-disc list-inside">
+                    {supplements.map((supplement, index) => (
+                      <li key={index}>
+                        {supplement}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+        {/* History Section */}
+        {showHistory && (
+          <div className="mt-8 px-4">
+            <h2 className="text-3xl font-semibold mb-4 text-center">Analysis History</h2>
+            {history.length === 0 ? (
+              <p className="text-lg text-center">No analysis history available.</p>
+            ) : (
+              <div className="grid gap-4">
+                {history.map((item) => (
+                  <Card key={item.id} className="shadow-md">
+                    <CardHeader>
+                      <CardTitle>Analysis Result</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {item.image && (
+                        <Image
+                          src={item.image}
+                          alt="Uploaded Leaf"
+                          width={200}
+                          height={120}
+                          className="w-full h-auto object-cover rounded-xl shadow-lg border"
+                        />
+                      )}
+                      <div>
+                        Detected Plant: <Badge variant="secondary">{item.plantName}</Badge>
+                      </div>
+                      {item.disease === 'No disease detected' ? (
+                        <Alert>
+                          <AlertTitle>No Disease Detected</AlertTitle>
+                          <AlertDescription>No disease was detected in the image.</AlertDescription>
+                        </Alert>
+                      ) : (
+                        <>
+                          <div>
+                            Detected Disease: <Badge variant="destructive">{item.plantName} - {item.disease}</Badge>
+                          </div>
+                          <p>Confidence: {(item.confidence! * 100).toFixed(2)}%</p>
+                        </>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             )}
-          </CardContent>
-        </Card>
-      )}
-      {/* History Section */}
-      {showHistory && (
-        <div className="mt-8 px-4">
-          <h2 className="text-3xl font-semibold mb-4 text-center">Analysis History</h2>
-          {history.length === 0 ? (
-            <p className="text-lg text-center">No analysis history available.</p>
-          ) : (
-            <div className="grid gap-4">
-              {history.map((item) => (
-                <Card key={item.id} className="shadow-md">
-                  <CardHeader>
-                    <CardTitle>Analysis Result</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {item.image && (
-                      <Image
-                        src={item.image}
-                        alt="Uploaded Leaf"
-                        width={200}
-                        height={120}
-                        className="w-full h-auto object-cover rounded-xl shadow-lg border"
-                      />
-                    )}
-                    <div>
-                      Detected Plant: <Badge variant="secondary">{item.plantName}</Badge>
-                    </div>
-                    {item.disease === 'No disease detected' ? (
-                      <Alert>
-                        <AlertTitle>No Disease Detected</AlertTitle>
-                        <AlertDescription>No disease was detected in the image.</AlertDescription>
-                      </Alert>
-                    ) : (
-                      <>
-                        <div>
-                          Detected Disease: <Badge variant="destructive">{item.plantName} - {item.disease}</Badge>
-                        </div>
-                        <p>Confidence: {(item.confidence! * 100).toFixed(2)}%</p>
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </main>
       {/* Footer */}
-      <footer className="bg-primary mt-16 py-6 text-center text-sm">
+      <footer className="bg-primary mt-16 py-6 text-center text-sm fixed bottom-0 left-0 w-full">
         <p className="text-primary-foreground">Created by Aditya , Tanuj and Mayank</p>
       </footer>
     </div>
   );
 }
+
