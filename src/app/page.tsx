@@ -363,13 +363,7 @@ export default function PlantDiseaseDetector() {
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {cropData.map((crop, index) => (
                 <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <Image
-                    src={crop.imageSrc}
-                    alt={crop.imageAlt}
-                    width={400}
-                    height={300}
-                    className="w-full h-auto object-cover rounded-t-md"
-                  />
+                  
                   <CardHeader>
                     <CardTitle>{crop.name}</CardTitle>
                   </CardHeader>
@@ -549,3 +543,4 @@ export default function PlantDiseaseDetector() {
     </div>
   );
 }
+
