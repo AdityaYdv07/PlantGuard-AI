@@ -12,6 +12,7 @@ import {Badge} from '@/components/ui/badge';
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
+  const [plantName, setPlantName] = useState<string | null>(null);
   const [disease, setDisease] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
   const [causes, setCauses] = useState<string[] | null>(null);
@@ -37,6 +38,7 @@ export default function Home() {
 
     try {
       const diseaseDetectionResult = await detectDisease({photoUrl: image});
+      setPlantName(diseaseDetectionResult.plantName);
       setDisease(diseaseDetectionResult.disease);
       setConfidence(diseaseDetectionResult.confidence);
 
@@ -65,20 +67,13 @@ export default function Home() {
             {image && (
               <img src={image} alt="Uploaded plant" className="rounded-md shadow-md" style={{maxHeight: '200px', objectFit: 'contain'}} />
             )}
-            {/*
-            <Textarea
-              placeholder="Describe your plant and its environment (e.g., type of plant, location, watering schedule)"
-              value={plantDescription}
-              onChange={(e) => setPlantDescription(e.target.value)}
-            />
-            */}
             <Button onClick={handleAnalyzeImage} className="w-full bg-primary text-primary-foreground hover:bg-primary/80">
               Analyze Image
             </Button>
           </CardContent>
         </Card>
 
-        {disease && confidence !== null && (
+        {disease && confidence !== null && plantName && (
           <Card className="w-full max-w-md mx-auto">
             <CardHeader>
               <CardTitle>Analysis Result</CardTitle>
@@ -92,6 +87,9 @@ export default function Home() {
                 </Alert>
               ) : (
                 <>
+                  <div>
+                    Detected Plant: <Badge variant="secondary">{plantName}</Badge>
+                  </div>
                   <div>
                     Detected Disease: <Badge variant="destructive">{disease}</Badge>
                   </div>
