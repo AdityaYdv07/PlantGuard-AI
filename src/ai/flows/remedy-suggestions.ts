@@ -1,0 +1,69 @@
+'use server';
+/**
+ * @fileOverview A flow to suggest possible causes and remedies for a detected plant disease.
+ *
+ * - suggestRemedies - A function that suggests remedies for a plant disease.
+ * - SuggestRemediesInput - The input type for the suggestRemedies function.
+ * - SuggestRemediesOutput - The return type for the suggestRemedies function.
+ */
+
+import {ai} from '@/ai/ai-instance';
+import {z} from 'genkit';
+
+const SuggestRemediesInputSchema = z.object({
+  disease: z.string().describe('The name of the detected plant disease.'),
+  plantDescription: z.string().describe('A description of the plant and its environment.'),
+});
+export type SuggestRemediesInput = z.infer<typeof SuggestRemediesInputSchema>;
+
+const SuggestRemediesOutputSchema = z.object({
+  possibleCauses: z.array(z.string()).describe('Possible causes of the disease.'),
+  remedies: z.array(z.string()).describe('Suggested remedies for the disease.'),
+});
+export type SuggestRemediesOutput = z.infer<typeof SuggestRemediesOutputSchema>;
+
+export async function suggestRemedies(input: SuggestRemediesInput): Promise<SuggestRemediesOutput> {
+  return suggestRemediesFlow(input);
+}
+
+const prompt = ai.definePrompt({
+  name: 'suggestRemediesPrompt',
+  input: {
+    schema: z.object({
+      disease: z.string().describe('The name of the detected plant disease.'),
+      plantDescription: z.string().describe('A description of the plant and its environment.'),
+    }),
+  },
+  output: {
+    schema: z.object({
+      possibleCauses: z.array(z.string()).describe('Possible causes of the disease.'),
+      remedies: z.array(z.string()).describe('Suggested remedies for the disease.'),
+    }),
+  },
+  prompt: `You are an expert in plant diseases and remedies.
+
+You have identified that a plant has the following disease: {{{disease}}}.
+
+Given the following description of the plant and its environment:
+{{{plantDescription}}}
+
+Please suggest possible causes and remedies for this disease.
+
+Format your output as a JSON object with "possibleCauses" and "remedies" fields, each containing a list of strings.
+`,
+});
+
+const suggestRemediesFlow = ai.defineFlow<
+  typeof SuggestRemediesInputSchema,
+  typeof SuggestRemediesOutputSchema
+>(
+  {
+    name: 'suggestRemediesFlow',
+    inputSchema: SuggestRemediesInputSchema,
+    outputSchema: SuggestRemediesOutputSchema,
+  },
+  async input => {
+    const {output} = await prompt(input);
+    return output!;
+  }
+);
