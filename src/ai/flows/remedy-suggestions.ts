@@ -1,8 +1,10 @@
 'use server';
 /**
- * @fileOverview A flow to suggest possible causes and remedies for a detected plant disease.
+ * @fileOverview A flow to suggest possible causes and remedies for a detected plant disease,
+ * including supplement recommendations with a buy link.
  *
- * - suggestRemedies - A function that suggests remedies for a plant disease.
+ * - suggestRemedies - A function that suggests remedies for a plant disease, including
+ *   supplement suggestions with a buy link.
  * - SuggestRemediesInput - The input type for the suggestRemedies function.
  * - SuggestRemediesOutput - The return type for the suggestRemedies function.
  */
@@ -19,6 +21,10 @@ export type SuggestRemediesInput = z.infer<typeof SuggestRemediesInputSchema>;
 const SuggestRemediesOutputSchema = z.object({
   possibleCauses: z.array(z.string()).describe('Possible causes of the disease.'),
   remedies: z.array(z.string()).describe('Suggested remedies for the disease.'),
+  supplements: z.array(z.object({
+    name: z.string().describe('The name of the recommended supplement.'),
+    link: z.string().url().describe('A link to buy the supplement online.'),
+  })).optional().describe('Suggested supplements for the disease, including a buy link.'),
 });
 export type SuggestRemediesOutput = z.infer<typeof SuggestRemediesOutputSchema>;
 
@@ -38,6 +44,10 @@ const prompt = ai.definePrompt({
     schema: z.object({
       possibleCauses: z.array(z.string()).describe('Possible causes of the disease.'),
       remedies: z.array(z.string()).describe('Suggested remedies for the disease.'),
+      supplements: z.array(z.object({
+        name: z.string().describe('The name of the recommended supplement.'),
+        link: z.string().url().describe('A link to buy the supplement online.'),
+      })).optional().describe('Suggested supplements for the disease, including a buy link.'),
     }),
   },
   prompt: `You are an expert in plant diseases and remedies.
@@ -47,9 +57,13 @@ You have identified that a plant has the following disease: {{{disease}}}.
 Given the following description of the plant and its environment:
 {{{plantDescription}}}
 
-Please suggest possible causes and remedies for this disease.
+Please suggest possible causes, remedies, and supplements for this disease.
 
-Format your output as a JSON object with "possibleCauses" and "remedies" fields, each containing a list of strings.
+For each supplement, provide a name and a link where it can be purchased online.
+
+Format your output as a JSON object with "possibleCauses", "remedies", and "supplements" fields.
+The "possibleCauses" and "remedies" fields should contain a list of strings.
+The "supplements" field should contain a list of objects, each with "name" and "link" fields.
 `,
 });
 
