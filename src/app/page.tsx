@@ -22,12 +22,13 @@ export default function PlantDiseaseDetector() {
   const [remedies, setRemedies] = useState<string[] | null>(null);
   const [loading, setLoading] = useState(false);
   const {toast} = useToast();
-  const [showHomeDescription, setShowHomeDescription] = useState(true);
-  const [showAiEngine, setShowAiEngine] = useState(false);
+  const [showHomeDescription, setShowHomeDescription] = useState(false);
+  const [showAiEngine, setShowAiEngine] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [useRearCamera, setUseRearCamera] = useState(false);
+  const [plantUnknownError, setPlantUnknownError] = useState(false);
 
   const getCameraPermission = async () => {
     try {
@@ -66,11 +67,19 @@ export default function PlantDiseaseDetector() {
   const analyzeImage = useCallback(
     async (img: string) => {
       setLoading(true);
+      setPlantUnknownError(false); // Reset plant unknown error on new analysis
       try {
         const diseaseDetectionResult = await detectDisease({photoUrl: img});
         setPlantName(diseaseDetectionResult.plantName);
         setDisease(diseaseDetectionResult.disease);
         setConfidence(diseaseDetectionResult.confidence);
+
+        if (!diseaseDetectionResult.plantName || diseaseDetectionResult.plantName.toLowerCase() === 'unknown') {
+          setPlantUnknownError(true);
+          setCauses(null);
+          setRemedies(null);
+          return;
+        }
 
         const remedySuggestionsResult = await suggestRemedies({
           disease: diseaseDetectionResult.disease,
@@ -288,15 +297,24 @@ export default function PlantDiseaseDetector() {
         </Card>
       )}
 
-      {disease && confidence !== null && plantName && showAiEngine && (
+      {plantUnknownError && showAiEngine && (
+        <Alert variant="destructive" className="w-full max-w-md mx-auto mt-8">
+          <AlertTitle>Unknown Plant</AlertTitle>
+          <AlertDescription>
+            We could not identify the plant in the image. Please try again with a clearer image.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {disease && confidence !== null && plantName && showAiEngine && !plantUnknownError && (
         <Card className="w-full max-w-md mx-auto mt-8">
           <CardHeader>
             <CardTitle>Analysis Result</CardTitle>
           </CardHeader>
           <CardContent>
-          <div>
-                Detected Plant: <Badge variant="secondary">{plantName}</Badge>
-              </div>
+            <div>
+              Detected Plant: <Badge variant="secondary">{plantName}</Badge>
+            </div>
             {disease === 'No disease detected' ? (
               <Alert>
                 <AlertTitle>No Disease Detected</AlertTitle>
@@ -314,7 +332,7 @@ export default function PlantDiseaseDetector() {
         </Card>
       )}
 
-      {causes && remedies && showAiEngine && (
+      {causes && remedies && showAiEngine && !plantUnknownError && (
         <Card className="w-full max-w-md mx-auto mt-8">
           <CardHeader>
             <CardTitle>Remedy Suggestions</CardTitle>
