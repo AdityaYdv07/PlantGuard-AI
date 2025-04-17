@@ -23,7 +23,7 @@ const SuggestRemediesOutputSchema = z.object({
   remedies: z.array(z.string()).describe('Suggested remedies for the disease.'),
   supplements: z.array(z.object({
     name: z.string().describe('The name of the recommended supplement.'),
-    link: z.string().url().describe('A link to buy the supplement online.'),
+    link: z.string().describe('A link to buy the supplement online.'),
   })).optional().describe('Suggested supplements for the disease, including a buy link.'),
 });
 export type SuggestRemediesOutput = z.infer<typeof SuggestRemediesOutputSchema>;
@@ -46,7 +46,7 @@ const prompt = ai.definePrompt({
       remedies: z.array(z.string()).describe('Suggested remedies for the disease.'),
       supplements: z.array(z.object({
         name: z.string().describe('The name of the recommended supplement.'),
-        link: z.string().url().describe('A link to buy the supplement online.'),
+        link: z.string().describe('A link to buy the supplement online.'),
       })).optional().describe('Suggested supplements for the disease, including a buy link.'),
     }),
   },
@@ -81,3 +81,4 @@ const suggestRemediesFlow = ai.defineFlow<
     return output!;
   }
 );
+
