@@ -192,7 +192,7 @@ export default function PlantDiseaseDetector() {
           <h2 className="text-3xl font-semibold mb-4 text-center">Welcome to CropGuard AI</h2>
           <p className="text-lg mb-6 text-center">
             Our website is dedicated to helping farmers and gardeners identify and manage plant diseases using the power of AI.
-            Below are some common crops and their benefits:
+           
           </p>
 
           
@@ -292,4 +292,5 @@ export default function PlantDiseaseDetector() {
     </div>
   );
 }
+
 
