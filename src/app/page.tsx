@@ -264,6 +264,19 @@ export default function PlantDiseaseDetector() {
           >
             AI Engine
           </Button>
+          <h2 className="text-3xl font-semibold mt-8 text-center">How We Use AI</h2>
+          <p className="text-lg mb-6 text-center">
+            PlantGuard AI employs cutting-edge artificial intelligence to revolutionize plant disease detection. Our system utilizes convolutional neural networks (CNNs) trained on vast datasets of plant images to identify diseases with high accuracy.
+          </p>
+          <h2 className="text-3xl font-semibold mt-8 text-center">Why PlantGuard AI is better</h2>
+          <p className="text-lg mb-6 text-center">
+            Our AI-driven approach offers several advantages over traditional methods:
+          </p>
+          <ul className="list-disc list-inside text-lg mb-6 text-center">
+            <li><strong>Speed and Efficiency:</strong> Get instant results without waiting for lab tests.</li>
+            <li><strong>Accuracy:</strong> Our AI models are trained on vast datasets to ensure reliable diagnoses.</li>
+            <li><strong>Accessibility:</strong> Use our tool anytime, anywhere, with just a smartphone or computer.</li>
+          </ul>
         </div>
       )}
 
@@ -417,7 +430,7 @@ export default function PlantDiseaseDetector() {
                 <ul className="list-disc list-inside">
                   {supplements.map((supplement, index) => (
                     <li key={index}>
-                      {supplement.name} - <a href={supplement.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Buy Now</a>
+                      {supplement.name}
                     </li>
                   ))}
                 </ul>

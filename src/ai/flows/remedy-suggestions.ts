@@ -75,15 +75,6 @@ const suggestRemediesFlow = ai.defineFlow<
   async input => {
     const {output} = await prompt(input);
 
-    // Generate BharatAgri buy links for supplements
-    const supplementsWithLinks = output?.supplements?.map(supplement => ({
-      ...supplement,
-      link: `https://www.bharatagri.com/search?q=${encodeURIComponent(supplement.name)}`,
-    }));
-
-    return {
-      ...output!,
-      supplements: supplementsWithLinks,
-    };
+    return output!;
   }
 );
