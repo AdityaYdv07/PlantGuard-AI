@@ -13,16 +13,128 @@ import {useDropzone} from 'react-dropzone';
 import {cn} from '@/lib/utils';
 import Image from 'next/image';
 
-interface HistoryItem {
-  id: string;
-  image: string | null;
-  plantName: string | null;
-  disease: string | null;
-  confidence: number | null;
-  causes: string[] | null;
-  remedies: string[] | null;
-  supplements: string[] | null;
-}
+const cropData = [
+  {
+    name: 'Rice',
+    seasons: ['Kharif (Monsoon)'],
+    states: ['West Bengal', 'Uttar Pradesh', 'Punjab', 'Odisha', 'Andhra Pradesh'],
+    benefits: ['High in carbohydrates', 'Good source of energy'],
+    imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Paddy_field_in_Thailand.jpg/1280px-Paddy_field_in_Thailand.jpg',
+    imageAlt: 'Paddy Field',
+  },
+  {
+    name: 'Wheat',
+    seasons: ['Rabi (Winter)'],
+    states: ['Uttar Pradesh', 'Punjab', 'Haryana', 'Madhya Pradesh', 'Rajasthan'],
+    benefits: ['Rich in fiber', 'Good for heart health'],
+    imageSrc: 'https://www.britannica.com/plant/wheat',
+    imageAlt: 'Wheat Field',
+  },
+  {
+    name: 'Pulses (e.g., Lentil, Chickpea)',
+    seasons: ['Rabi (Winter)'],
+    states: ['Madhya Pradesh', 'Rajasthan', 'Maharashtra', 'Uttar Pradesh', 'Karnataka'],
+    benefits: ['High in protein', 'Good for muscle building'],
+    imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Kabuli_chana.JPG/1280px-Kabuli_chana.JPG',
+    imageAlt: 'Chickpeas',
+  },
+  {
+    name: 'Millets (e.g., Jowar, Bajra, Ragi)',
+    seasons: ['Kharif (Monsoon)', 'Rabi (Winter)', 'Zaid (Summer)'],
+    states: ['Maharashtra', 'Karnataka', 'Rajasthan', 'Tamil Nadu', 'Andhra Pradesh'],
+    benefits: ['Rich in minerals', 'Good for digestion'],
+    imageSrc: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Sorghum_grain.jpg/1280px-Sorghum_grain.jpg',
+    imageAlt: 'Jowar Crop',
+  },
+  {
+    name: 'Cotton',
+    seasons: ['Kharif (Monsoon)'],
+    states: ['Maharashtra', 'Gujarat', 'Telangana', 'Andhra Pradesh', 'Punjab'],
+    benefits: ['Cash crop', 'Supports textile industry'],
+    imageSrc: 'https://www.shutterstock.com/image-photo/white-cotton-field-260nw-1920694138.jpg',
+    imageAlt: 'Cotton Field',
+  },
+  {
+    name: 'Sugarcane',
+    seasons: ['Throughout the year'],
+    states: ['Uttar Pradesh', 'Maharashtra', 'Karnataka', 'Tamil Nadu', 'Gujarat'],
+    benefits: ['Source of sugar', 'Supports sugar industry'],
+    imageSrc: 'https://www.shutterstock.com/image-photo/sugarcane-field-india-260nw-1342373281.jpg',
+    imageAlt: 'Sugarcane Field',
+  },
+  {
+    name: 'Tea',
+    seasons: ['Throughout the year'],
+    states: ['Assam', 'West Bengal', 'Tamil Nadu', 'Kerala', 'Himachal Pradesh'],
+    benefits: ['Beverage crop', 'Supports tea industry'],
+    imageSrc: 'https://www.shutterstock.com/image-photo/tea-plantation-landscape-260nw-2144523539.jpg',
+    imageAlt: 'Tea Plantation',
+  },
+  {
+    name: 'Coffee',
+    seasons: ['Throughout the year'],
+    states: ['Karnataka', 'Kerala', 'Tamil Nadu', 'Andhra Pradesh', 'Odisha'],
+    benefits: ['Beverage crop', 'Supports coffee industry'],
+    imageSrc: 'https://www.shutterstock.com/image-photo/coffee-plantation-south-india-260nw-1072994939.jpg',
+    imageAlt: 'Coffee Plantation',
+  },
+  {
+    name: 'Groundnut',
+    seasons: ['Kharif (Monsoon)'],
+    states: ['Gujarat', 'Rajasthan', 'Tamil Nadu', 'Andhra Pradesh', 'Maharashtra'],
+    benefits: ['Source of oil', 'Rich in protein'],
+    imageSrc: 'https://www.shutterstock.com/image-photo/peanut-field-summer-day-260nw-2253869289.jpg',
+    imageAlt: 'Groundnut Field',
+  },
+  {
+    name: 'Jute',
+    seasons: ['Kharif (Monsoon)'],
+    states: ['West Bengal', 'Bihar', 'Assam', 'Odisha', 'Meghalaya'],
+    benefits: ['Fiber crop', 'Supports jute industry'],
+    imageSrc: 'https://www.shutterstock.com/image-photo/jute-cultivation-rural-bengal-260nw-2251994236.jpg',
+    imageAlt: 'Jute Crop',
+  },
+  {
+    name: 'Maize',
+    seasons: ['Kharif (Monsoon)'],
+    states: ['Karnataka', 'Rajasthan', 'Uttar Pradesh', 'Madhya Pradesh', 'Bihar'],
+    benefits: ['Food and fodder crop', 'Source of starch'],
+    imageSrc: 'https://www.shutterstock.com/image-photo/corn-field-260nw-1743118327.jpg',
+    imageAlt: 'Maize Field',
+  },
+  {
+    name: 'Lentil',
+    seasons: ['Rabi (Winter)'],
+    states: ['Madhya Pradesh', 'Uttar Pradesh', 'Bihar', 'West Bengal', 'Rajasthan'],
+    benefits: ['High in protein and fiber', 'Good for controlling cholesterol and blood sugar'],
+    imageSrc: 'https://www.shutterstock.com/image-photo/harvesting-green-lentil-plants-lens-260nw-2341424076.jpg',
+    imageAlt: 'Lentil Crop',
+  },
+  {
+    name: 'Mustard',
+    seasons: ['Rabi (Winter)'],
+    states: ['Rajasthan', 'Haryana', 'Madhya Pradesh', 'Uttar Pradesh', 'West Bengal'],
+    benefits: ['Source of edible oil', 'Seeds, leaves, and stems are edible as a vegetable'],
+    imageSrc: 'https://www.shutterstock.com/image-photo/close-oilseed-rape-flowers-260nw-1191949766.jpg',
+    imageAlt: 'Mustard Crop',
+  },
+  {
+    name: 'Mango',
+    seasons: ['Summer'],
+    states: ['Uttar Pradesh', 'Andhra Pradesh', 'Bihar', 'Gujarat', 'Karnataka'],
+    benefits: ['Rich in vitamins A and C', 'Promotes eye health and boosts immunity'],
+    imageSrc: 'https://www.shutterstock.com/image-photo/indian-alphonso-mangoes-260nw-1869999028.jpg',
+    imageAlt: 'Mangoes',
+  },
+  {
+    name: 'Banana',
+    seasons: ['Throughout the year'],
+    states: ['Tamil Nadu', 'Maharashtra', 'Gujarat', 'Andhra Pradesh', 'Karnataka'],
+    benefits: ['High in potassium', 'Good for heart health and energy'],
+    imageSrc: 'https://www.shutterstock.com/image-photo/banana-isolated-on-white-background-260nw-1410860652.jpg',
+    imageAlt: 'Bananas',
+  },
+];
 
 export default function PlantDiseaseDetector() {
   const [image, setImage] = useState<string | null>(null);
@@ -248,8 +360,31 @@ export default function PlantDiseaseDetector() {
             <p className="text-lg mb-6 text-center">
               Our website is dedicated to helping farmers and gardeners identify and manage plant diseases using the power of AI. We leverage advanced machine learning algorithms to analyze images of plants and provide accurate diagnoses.
             </p>
-
-            
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {cropData.map((crop, index) => (
+                <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <Image
+                    src={crop.imageSrc}
+                    alt={crop.imageAlt}
+                    width={400}
+                    height={300}
+                    className="w-full h-auto object-cover rounded-t-md"
+                  />
+                  <CardHeader>
+                    <CardTitle>{crop.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm">
+                      <strong>Seasons:</strong> {crop.seasons.join(', ')}
+                      <br />
+                      <strong>States:</strong> {crop.states.join(', ')}
+                      <br />
+                      <strong>Benefits:</strong> {crop.benefits.join(', ')}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
            
           </div>
         )}
@@ -414,5 +549,3 @@ export default function PlantDiseaseDetector() {
     </div>
   );
 }
-
-
