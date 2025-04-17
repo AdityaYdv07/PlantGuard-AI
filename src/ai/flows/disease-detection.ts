@@ -17,8 +17,8 @@ export type DetectDiseaseInput = z.infer<typeof DetectDiseaseInputSchema>;
 
 const DetectDiseaseOutputSchema = z.object({
   plantName: z.string().describe('The detected plant name.'),
-  disease: z.string().describe('The detected disease, if any.'),
-  confidence: z.number().describe('The confidence score of the disease detection.'),
+  disease: z.string().describe('The detected disease, if any. If no disease is detected, specify "No disease detected".'),
+  confidence: z.number().describe('The confidence score of the disease detection. Should be 1.0 if no disease is detected.'),
 });
 export type DetectDiseaseOutput = z.infer<typeof DetectDiseaseOutputSchema>;
 
@@ -36,14 +36,14 @@ const prompt = ai.definePrompt({
   output: {
     schema: z.object({
       plantName: z.string().describe('The detected plant name.'),
-      disease: z.string().describe('The detected disease, if any.'),
-      confidence: z.number().describe('The confidence score of the disease detection.'),
+      disease: z.string().describe('The detected disease, if any. If no disease is detected, specify "No disease detected".'),
+      confidence: z.number().describe('The confidence score of the disease detection. Should be 1.0 if no disease is detected.'),
     }),
   },
   prompt: `You are an expert in plant pathology. Analyze the provided image of the plant and identify the plant, and any potential diseases.
 
   Respond with the detected plant name, detected disease and a confidence score.
-  If no disease is detected, state that no disease was detected and return a confidence of 1.0.
+  If no disease is detected, state that no disease was detected and return a confidence of 1.0. Make sure to always identify the plant name.
 
   Photo: {{media url=photoUrl mimeType="image/jpeg"}}`,
 });

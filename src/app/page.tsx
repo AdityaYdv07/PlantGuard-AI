@@ -294,6 +294,9 @@ export default function PlantDiseaseDetector() {
             <CardTitle>Analysis Result</CardTitle>
           </CardHeader>
           <CardContent>
+          <div>
+                Detected Plant: <Badge variant="secondary">{plantName}</Badge>
+              </div>
             {disease === 'No disease detected' ? (
               <Alert>
                 <AlertTitle>No Disease Detected</AlertTitle>
@@ -301,9 +304,6 @@ export default function PlantDiseaseDetector() {
               </Alert>
             ) : (
               <>
-                <div>
-                  Detected Plant: <Badge variant="secondary">{plantName}</Badge>
-                </div>
                 <div>
                   Detected Disease: <Badge variant="destructive">{plantName} - {disease}</Badge>
                 </div>
