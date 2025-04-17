@@ -1,7 +1,7 @@
 'use client';
 
-import React, {useState, useCallback} from 'react';
-import {UploadCloud, AlertTriangle} from 'lucide-react';
+import React, {useState, useCallback, useRef, useEffect} from 'react';
+import {UploadCloud, AlertTriangle, Camera} from 'lucide-react';
 import {detectDisease} from '@/ai/flows/disease-detection';
 import {suggestRemedies} from '@/ai/flows/remedy-suggestions';
 import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
@@ -12,59 +12,6 @@ import {useToast} from '@/hooks/use-toast';
 import {useDropzone} from 'react-dropzone';
 import {cn} from '@/lib/utils';
 import Image from 'next/image';
-
-const cropData = [
-  {
-    name: 'Wheat',
-    benefits: [
-      'Rich in carbohydrates, providing energy.',
-      'Good source of dietary fiber, aiding digestion.',
-      'Contains essential vitamins and minerals like iron and magnesium.',
-    ],
-    imageSrc: 'https://picsum.photos/400/300?random=1',
-    imageAlt: 'Golden wheat field',
-  },
-  {
-    name: 'Rice',
-    benefits: [
-      'Staple food for a large part of the world’s population.',
-      'Easy to digest and gluten-free.',
-      'Provides a good source of manganese and selenium.',
-    ],
-    imageSrc: 'https://picsum.photos/400/300?random=2',
-    imageAlt: 'Terraced rice paddies',
-  },
-  {
-    name: 'Corn',
-    benefits: [
-      'Versatile grain used in many food products.',
-      'Good source of antioxidants.',
-      'Contains vitamins A, B, and E.',
-    ],
-    imageSrc: 'https://picsum.photos/400/300?random=3',
-    imageAlt: 'Rows of corn stalks',
-  },
-  {
-    name: 'Soybeans',
-    benefits: [
-      'High in protein, essential for muscle building and repair.',
-      'Good source of healthy fats and fiber.',
-      'Contains isoflavones, which may have health benefits.',
-    ],
-    imageSrc: 'https://picsum.photos/400/300?random=4',
-    imageAlt: 'Soybean plants in a field',
-  },
-  {
-    name: 'Potatoes',
-    benefits: [
-      'Excellent source of vitamin C and potassium.',
-      'Provides energy and helps regulate blood sugar levels.',
-      'Can be prepared in many ways, making them a versatile food.',
-    ],
-    imageSrc: 'https://picsum.photos/400/300?random=5',
-    imageAlt: 'Harvested potatoes in a basket',
-  },
-];
 
 export default function PlantDiseaseDetector() {
   const [image, setImage] = useState<string | null>(null);
@@ -77,6 +24,31 @@ export default function PlantDiseaseDetector() {
   const {toast} = useToast();
   const [showHomeDescription, setShowHomeDescription] = useState(true);
   const [showAiEngine, setShowAiEngine] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState(false);
+
+  useEffect(() => {
+    const getCameraPermission = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({video: true});
+        setHasCameraPermission(true);
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        setHasCameraPermission(false);
+        toast({
+          variant: 'destructive',
+          title: 'Camera Access Denied',
+          description: 'Please enable camera permissions in your browser settings to use this app.',
+        });
+      }
+    };
+
+    getCameraPermission();
+  }, [toast]);
 
   const analyzeImage = useCallback(
     async (img: string) => {
@@ -148,6 +120,27 @@ export default function PlantDiseaseDetector() {
     setShowHomeDescription(false);
   };
 
+  const handleCamera = useCallback(() => {
+    if (videoRef.current) {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+        const imgData = canvas.toDataURL('image/jpeg');
+        setImage(imgData);
+        analyzeImage(imgData);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Could not capture image from camera.',
+        });
+      }
+    }
+  }, [analyzeImage, toast]);
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
       {/* Header */}
@@ -192,10 +185,7 @@ export default function PlantDiseaseDetector() {
           <h2 className="text-3xl font-semibold mb-4 text-center">Welcome to CropGuard AI</h2>
           <p className="text-lg mb-6 text-center">
             Our website is dedicated to helping farmers and gardeners identify and manage plant diseases using the power of AI.
-           
           </p>
-
-          
         </div>
       )}
 
@@ -204,28 +194,49 @@ export default function PlantDiseaseDetector() {
         <Card className="mt-10 p-6 rounded-xl w-11/12 max-w-2xl mx-auto text-center shadow-2xl">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-green-800">Upload Plant Image</CardTitle>
-            <CardDescription>Drag and drop an image, or select one from your files.</CardDescription>
+            <CardDescription>Drag and drop an image, select one from your files, or use your camera.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div
-              className={cn(
-                'flex flex-col items-center justify-center p-6 bg-secondary rounded-xl text-green-800 border-2 border-dashed border-green-600 cursor-pointer',
-                isDragActive ? 'border-primary' : ''
-              )}
-              {...getRootProps()}
-            >
-              <input id="upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" {...getInputProps()} />
-              <UploadCloud className="w-10 h-10 mb-2" />
-              <span className="text-sm">Click or drag &amp; drop your image here</span>
+            <div className="grid gap-4">
+              <div
+                className={cn(
+                  'flex flex-col items-center justify-center p-6 bg-secondary rounded-xl text-green-800 border-2 border-dashed border-green-600 cursor-pointer',
+                  isDragActive ? 'border-primary' : ''
+                )}
+                {...getRootProps()}
+              >
+                <input id="upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" {...getInputProps()} />
+                <UploadCloud className="w-10 h-10 mb-2" />
+                <span className="text-sm">Click or drag &amp; drop your image here</span>
+              </div>
+
+              <Button variant="outline" onClick={handleCamera} disabled={!hasCameraPermission}>
+                <Camera className="w-4 h-4 mr-2" />
+                Take a Picture
+              </Button>
+
+              <video ref={videoRef} className="w-full aspect-video rounded-md" autoPlay muted />
+
+              { !(hasCameraPermission) && (
+                  <Alert variant="destructive">
+                            <AlertTitle>Camera Access Required</AlertTitle>
+                            <AlertDescription>
+                              Please allow camera access to use this feature.
+                            </AlertDescription>
+                    </Alert>
+              )
+              }
             </div>
 
             {loading && <p className="mt-4 text-green-800 font-medium animate-pulse">Analyzing image...</p>}
 
             {image && (
-              <img
+              <Image
                 src={image}
                 alt="Uploaded Leaf"
-                className="mt-6 w-full h-64 object-cover rounded-xl shadow-lg border"
+                width={500}
+                height={300}
+                className="mt-6 w-full h-auto object-cover rounded-xl shadow-lg border"
               />
             )}
           </CardContent>
@@ -292,5 +303,3 @@ export default function PlantDiseaseDetector() {
     </div>
   );
 }
-
-
