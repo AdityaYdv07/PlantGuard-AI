@@ -91,9 +91,9 @@ export default function Home() {
                 </Alert>
               ) : (
                 <>
-                  <p>
+                  <div>
                     Detected Disease: <Badge variant="destructive">{disease}</Badge>
-                  </p>
+                  </div>
                   <p>Confidence: {(confidence * 100).toFixed(2)}%</p>
                 </>
               )}
@@ -131,3 +131,4 @@ export default function Home() {
     </div>
   );
 }
+
