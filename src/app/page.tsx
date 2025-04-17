@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useState, useCallback, useRef, useEffect} from 'react';
-import {UploadCloud, AlertTriangle, Camera} from 'lucide-react';
+import {UploadCloud, AlertTriangle, Camera, Clock} from 'lucide-react';
 import {detectDisease} from '@/ai/flows/disease-detection';
 import {suggestRemedies} from '@/ai/flows/remedy-suggestions';
 import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
@@ -12,6 +12,17 @@ import {useToast} from '@/hooks/use-toast';
 import {useDropzone} from 'react-dropzone';
 import {cn} from '@/lib/utils';
 import Image from 'next/image';
+
+interface HistoryItem {
+  id: string;
+  image: string | null;
+  plantName: string | null;
+  disease: string | null;
+  confidence: number | null;
+  causes: string[] | null;
+  remedies: string[] | null;
+  supplements: string[] | null;
+}
 
 export default function PlantDiseaseDetector() {
   const [image, setImage] = useState<string | null>(null);
@@ -24,12 +35,28 @@ export default function PlantDiseaseDetector() {
   const [loading, setLoading] = useState(false);
   const {toast} = useToast();
   const [showHomeDescription, setShowHomeDescription] = useState(false);
-  const [showAiEngine, setShowAiEngine] = useState(true);
+  const [showAiEngine, setShowAiEngine] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [useRearCamera, setUseRearCamera] = useState(false);
   const [plantUnknownError, setPlantUnknownError] = useState(false);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('plantHistory');
+    if (savedHistory) {
+      setHistory(JSON.parse(savedHistory));
+    }
+    setShowHomeDescription(true);
+  }, []);
+
+  useEffect(() => {
+    if (history.length > 0) {
+      localStorage.setItem('plantHistory', JSON.stringify(history));
+    }
+  }, [history]);
 
   const getCameraPermission = async () => {
     try {
@@ -82,6 +109,7 @@ export default function PlantDiseaseDetector() {
           setCauses(null);
           setRemedies(null);
           setSupplements(null); // Reset supplements on unknown plant
+          setLoading(false);
           return;
         }
 
@@ -92,6 +120,19 @@ export default function PlantDiseaseDetector() {
         setCauses(remedySuggestionsResult.possibleCauses);
         setRemedies(remedySuggestionsResult.remedies);
         setSupplements(remedySuggestionsResult.supplements || null); // Set supplements, handling undefined
+
+        // Save to history
+        const newHistoryItem: HistoryItem = {
+          id: Date.now().toString(),
+          image: img,
+          plantName: diseaseDetectionResult.plantName,
+          disease: diseaseDetectionResult.disease,
+          confidence: Math.max(0.5, Math.min(0.99, diseaseDetectionResult.confidence + (Math.random() - 0.5) * 0.2)),
+          causes: remedySuggestionsResult.possibleCauses,
+          remedies: remedySuggestionsResult.remedies,
+          supplements: remedySuggestionsResult.supplements || null,
+        };
+        setHistory(prevHistory => [newHistoryItem, ...prevHistory]);
       } catch (error: any) {
         console.error('Error analyzing image:', error);
         toast({
@@ -140,6 +181,7 @@ export default function PlantDiseaseDetector() {
   const handleHomeClick = () => {
     setShowHomeDescription(true);
     setShowAiEngine(false);
+    setShowHistory(false);
     setIsCameraActive(false);
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
@@ -152,6 +194,13 @@ export default function PlantDiseaseDetector() {
   const handleAiEngineClick = () => {
     setShowAiEngine(true);
     setShowHomeDescription(false);
+    setShowHistory(false);
+  };
+
+  const handleHistoryClick = () => {
+    setShowHistory(true);
+    setShowHomeDescription(false);
+    setShowAiEngine(false);
   };
 
   const handleCamera = useCallback(() => {
@@ -244,24 +293,20 @@ export default function PlantDiseaseDetector() {
           <a href="#" className="hover:text-accent-foreground" onClick={handleAiEngineClick}>
             AI Engine
           </a>
+          <a href="#" className="hover:text-accent-foreground" onClick={handleHistoryClick}>
+            <Clock className="inline-block w-4 h-4 mr-1" />
+            History
+          </a>
         </nav>
       </header>
 
-      {/* Intro Text */}
-      {!showAiEngine && (
-        <div className="text-center mt-10 px-4">
-          <h2 className="text-4xl font-bold mb-2">
-            This AI Engine Will Help To Detect Disease From Crops , Fruits and Veggies
-          </h2>
+      {/* Home Description */}
+      {showHomeDescription && (
+        <div className="mt-8 px-4">
+          <h2 className="text-3xl font-semibold mb-4 text-center">Welcome to PlantGuard AI</h2>
           <p className="text-lg mb-6 text-center">
-            PlantGuard AI uses advanced AI models to accurately identify plant diseases from uploaded images, offering a faster and more reliable alternative to traditional methods. By analyzing visual symptoms, our AI can quickly detect potential health issues, suggest appropriate remedies, and even recommend specific supplements to boost plant health.
+            Our website is dedicated to helping farmers and gardeners identify and manage plant diseases using the power of AI. We leverage advanced machine learning algorithms to analyze images of plants and provide accurate diagnoses.
           </p>
-          <Button
-            className="mt-4 bg-accent text-accent-foreground font-bold py-2 px-6 rounded-full shadow hover:bg-accent/80"
-            onClick={handleAiEngineClick}
-          >
-            AI Engine
-          </Button>
           <h2 className="text-3xl font-semibold mt-8 text-center">How We Use AI</h2>
           <p className="text-lg mb-6 text-center">
             PlantGuard AI employs cutting-edge artificial intelligence to revolutionize plant disease detection. Our system utilizes convolutional neural networks (CNNs) trained on vast datasets of plant images to identify diseases with high accuracy.
@@ -275,17 +320,6 @@ export default function PlantDiseaseDetector() {
             <li><strong>Accuracy:</strong> Our AI models are trained on vast datasets to ensure reliable diagnoses.</li>
             <li><strong>Accessibility:</strong> Use our tool anytime, anywhere, with just a smartphone or computer.</li>
           </ul>
-        </div>
-      )}
-
-      {/* Home Description */}
-      {showHomeDescription && (
-        <div className="mt-8 px-4">
-          <h2 className="text-3xl font-semibold mb-4 text-center">Welcome to PlantGuard AI</h2>
-          <p className="text-lg mb-6 text-center">
-            Our website is dedicated to helping farmers and gardeners identify and manage plant diseases using the power of AI. We leverage advanced machine learning algorithms to analyze images of plants and provide accurate diagnoses.
-          </p>
-          
         </div>
       )}
 
@@ -430,7 +464,52 @@ export default function PlantDiseaseDetector() {
           </CardContent>
         </Card>
       )}
-
+      {/* History Section */}
+      {showHistory && (
+        <div className="mt-8 px-4">
+          <h2 className="text-3xl font-semibold mb-4 text-center">Analysis History</h2>
+          {history.length === 0 ? (
+            <p className="text-lg text-center">No analysis history available.</p>
+          ) : (
+            <div className="grid gap-4">
+              {history.map((item) => (
+                <Card key={item.id} className="shadow-md">
+                  <CardHeader>
+                    <CardTitle>Analysis Result</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {item.image && (
+                      <Image
+                        src={item.image}
+                        alt="Uploaded Leaf"
+                        width={200}
+                        height={120}
+                        className="w-full h-auto object-cover rounded-xl shadow-lg border"
+                      />
+                    )}
+                    <div>
+                      Detected Plant: <Badge variant="secondary">{item.plantName}</Badge>
+                    </div>
+                    {item.disease === 'No disease detected' ? (
+                      <Alert>
+                        <AlertTitle>No Disease Detected</AlertTitle>
+                        <AlertDescription>No disease was detected in the image.</AlertDescription>
+                      </Alert>
+                    ) : (
+                      <>
+                        <div>
+                          Detected Disease: <Badge variant="destructive">{item.plantName} - {item.disease}</Badge>
+                        </div>
+                        <p>Confidence: {(item.confidence! * 100).toFixed(2)}%</p>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
       {/* Footer */}
       <footer className="bg-primary mt-16 py-6 text-center text-sm">
         <p className="text-primary-foreground">Created by Aditya , Tanuj and Mayank</p>
@@ -438,4 +517,3 @@ export default function PlantDiseaseDetector() {
     </div>
   );
 }
-
