@@ -58,6 +58,13 @@ export default function PlantDiseaseDetector() {
     }
   }, [history]);
 
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('plantHistory');
+      setHistory([]);
+    };
+  }, []);
+
   const getCameraPermission = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -501,5 +508,4 @@ export default function PlantDiseaseDetector() {
     </div>
   );
 }
-
 
