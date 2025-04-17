@@ -8,7 +8,6 @@ import {detectDisease} from '@/ai/flows/disease-detection';
 import {suggestRemedies} from '@/ai/flows/remedy-suggestions';
 import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
 import {AlertTriangle} from 'lucide-react';
-import {Textarea} from '@/components/ui/textarea';
 import {Badge} from '@/components/ui/badge';
 
 export default function Home() {
@@ -43,7 +42,7 @@ export default function Home() {
 
       const remedySuggestionsResult = await suggestRemedies({
         disease: diseaseDetectionResult.disease,
-        plantDescription: plantDescription,
+        plantDescription: '', // plantDescription,
       });
       setCauses(remedySuggestionsResult.possibleCauses);
       setRemedies(remedySuggestionsResult.remedies);
@@ -66,11 +65,13 @@ export default function Home() {
             {image && (
               <img src={image} alt="Uploaded plant" className="rounded-md shadow-md" style={{maxHeight: '200px', objectFit: 'contain'}} />
             )}
+            {/*
             <Textarea
               placeholder="Describe your plant and its environment (e.g., type of plant, location, watering schedule)"
               value={plantDescription}
               onChange={(e) => setPlantDescription(e.target.value)}
             />
+            */}
             <Button onClick={handleAnalyzeImage} className="w-full bg-primary text-primary-foreground hover:bg-primary/80">
               Analyze Image
             </Button>
@@ -131,4 +132,3 @@ export default function Home() {
     </div>
   );
 }
-
